@@ -1,0 +1,18 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="AudioTool.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="DocumentStubColor" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#FF7FFFD4</Value>
+    </Setting>
+    <Setting Name="FolderStubColor" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#FFFFE4C4</Value>
+    </Setting>
+    <Setting Name="CueStubColor" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#FF6495ED</Value>
+    </Setting>
+    <Setting Name="SoundStubColor" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#FF87CEFA</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

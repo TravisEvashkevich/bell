@@ -1,0 +1,63 @@
+﻿<Window x:Class="AudioTool.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:command="http://www.galasoft.ch/mvvmlight"
+        xmlns:views="clr-namespace:AudioTool.Views"
+        xmlns:viewModel="clr-namespace:AudioTool.ViewModel"
+        xmlns:core="clr-namespace:AudioTool.Core"
+        Title="{Binding Glue.DocumentIsSaved, Converter={StaticResource IsDocumentSavedToHeaderConverter}}" Height="436" Width="525" core:WindowClosingBehavior.Closing="{Binding ClosingCommand}">
+    <Window.DataContext>
+        <Binding Path="MainWindow" Source="{StaticResource Locator}"/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="298*"/>
+        </Grid.RowDefinitions>
+        <Menu Margin="0" Grid.Row="0">
+            <MenuItem Header="File">
+                <MenuItem Header="New" HorizontalAlignment="Left" Command="{Binding NewDocumentCommand}" />
+                <MenuItem Header="Open" HorizontalAlignment="Left" Command="{Binding OpenDocumentCommand}" />
+                <MenuItem Header="Save" HorizontalAlignment="Left" Command="{Binding SaveDocumentCommand}" />
+                <MenuItem Header="Save As" HorizontalAlignment="Left" Command="{Binding SaveAsCommand}" />
+                <MenuItem Header="Close" HorizontalAlignment="Left" Command="{Binding CloseCommand}" />
+                <Separator></Separator>
+                <MenuItem Header="Export" HorizontalAlignment="Left" Command="{Binding ExportCommand}" />
+            </MenuItem>
+            <MenuItem Header="Preferences" Command="{Binding OpenPreferencesWindowCommand}">
+            </MenuItem>
+        </Menu>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TreeView x:Name="TreeView" Margin="0" ItemsSource="{Binding Documents}" >
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectedItemChanged">
+                        <command:EventToCommand Command="{Binding Mode=OneWay, Path=SelectedItemChangedCommand}"
+                            PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </TreeView>
+            <GridSplitter HorizontalAlignment="Right" 
+                  VerticalAlignment="Stretch" 
+                  Grid.Column="1" ResizeBehavior="PreviousAndNext"
+                  Width="5" Background="#FFBCBCBC"/>
+            <!--<Border x:Name="Dupa" Grid.Column="1" Background="#FFB83737" Child="{Binding CurrentControl}"></Border>-->
+            <!--<wpfHostedXna:GraphicsDeviceControl Grid.Column="1" x:Name="ContentControl"></wpfHostedXna:GraphicsDeviceControl>-->
+
+            <!--<ContentControl x:Name="ContentControl" Grid.Column="1" Content="{Binding CurrentControl}" IsHitTestVisible="False">
+           </ContentControl>-->
+            <!--<ContentControl Grid.Column="1" x:Name="ContentControl" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Content="{Binding CurrentControl}">
+
+            </ContentControl>-->
+            <ContentControl Grid.Column="2" Content="{Binding CurrentView}" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" >
+            </ContentControl>
+            <!--<controls:ImageViewer x:Name="ContentControl" Grid.Column="1" Visibility="{Binding IsImageViewerViewVisible, Converter={StaticResource ShowIfTrueConverter}}" ImageFrame="{Binding ImageFrame, UpdateSourceTrigger=PropertyChanged}"/>
+            <views:DocumentWindow Grid.Column="1" Visibility="{Binding IsDocumentViewVisible, Converter={StaticResource ShowIfTrueConverter}}"></views:DocumentWindow>-->
+        </Grid>
+    </Grid>
+</Window>
