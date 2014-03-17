@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
 namespace AudioTool.Data.Export
@@ -8,17 +6,22 @@ namespace AudioTool.Data.Export
     [Serializable]
     public class SoundExport
     {
-        [JsonProperty("Pan")]
+        [JsonProperty("pan")]
         public float? Pan { get; set; }
-        [JsonProperty("Volume")]
+
+        [JsonProperty("volume")]
         public float? Volume { get; set; }
-        [JsonProperty("Pitch")]
+
+        [JsonProperty("pitch")]
         public float? Pitch { get; set; }
-        [JsonProperty("Looped")]
+
+        [JsonProperty("looped")]
         public bool Looped { get; set; }
-        [JsonProperty("Instances")]
+
+        [JsonProperty("instances")]
         public int? Instances { get; set; }
-         [JsonProperty("Name")]
+
+        [JsonProperty("name")]
         public string Name { get; set; }     
 
         public SoundExport(Sound sound)

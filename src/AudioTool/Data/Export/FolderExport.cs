@@ -8,18 +8,17 @@ namespace AudioTool.Data.Export
     [Serializable]
     public class FolderExport
     {
-        [JsonProperty("Name")]
+        [JsonProperty("name")]
         public string Name { get; set; }
 
-        [JsonProperty("Cues", Required = Required.AllowNull)]
+        [JsonProperty("cues", Required = Required.AllowNull)]
         public List<CueExport> Cues { get; set; }
 
-        [JsonProperty("Folders", Required = Required.AllowNull)]
+        [JsonProperty("folders", Required = Required.AllowNull)]
         public List<FolderExport> Folders { get; set; }
 
         public FolderExport(Folder folder)
         {
-
             Name = folder.Name;
 
             var cues = folder.Children.Where(p => p is Cue).Cast<Cue>();

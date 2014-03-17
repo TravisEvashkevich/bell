@@ -7,22 +7,28 @@ namespace AudioTool.Data.Export
     [Serializable]
     public class CueExport
     {
-        [JsonProperty("Pan")]
+        [JsonProperty("pan")]
         public float Pan { get; set; }
-        [JsonProperty("Volume")]
+
+        [JsonProperty("volume")]
         public float Volume { get; set; }
-        [JsonProperty("Pitch")]
+
+        [JsonProperty("pitch")]
         public float Pitch { get; set; }
-        [JsonProperty("Looped")]
+
+        [JsonProperty("looped")]
         public bool Looped { get; set; }
-        [JsonProperty("Instances")]
+
+        [JsonProperty("instances")]
         public int Instances { get; set; }
-        [JsonProperty("Name")]
+
+        [JsonProperty("name")]
         public string Name { get; set; }
-        [JsonProperty("Playback")]
+
+        [JsonProperty("playback")]
         public CuePlaybackMode PlaybackMode { get; set; }
 
-        [JsonProperty("Sounds")]
+        [JsonProperty("sounds")]
         public List<SoundExport> Sounds { get; set; }
 
         public CueExport(Cue cue)

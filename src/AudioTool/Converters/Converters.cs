@@ -125,16 +125,16 @@ namespace AudioTool.Converters
                 {
                     if (glue.DocumentIsSaved)
                     {
-                        return "Sprite Utility [" + glue.Document.Filename + "]";
+                        return "Audio Utility [" + glue.Document.Filename + "]";
                     }
                     else
                     {
-                        return "Sprite Utility [" + glue.Document.Filename + "*]";
+                        return "Audio Utility [" + glue.Document.Filename + "*]";
                     }
                 }
                 else
                 {
-                    return "Sprite Utility";
+                    return "Audio Utility";
                 }
             }
 

@@ -27,8 +27,6 @@ namespace AudioTool.Core
             return json;
         }
 
-
-
         public static T Deserialize<T>(string json)
         {
             var instance = JsonConvert.DeserializeObject<T>(json, Settings);

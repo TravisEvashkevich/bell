@@ -7,10 +7,10 @@ namespace AudioTool.Data.Export
     [Serializable]
     public class DocumentExport
     {
-        [JsonProperty("ProjectName")]
+        [JsonProperty("project_name")]
         public string ProjectName { get; set; }
 
-        [JsonProperty("Folders")]
+        [JsonProperty("folders")]
         public List<FolderExport> Folders { get; set; }
 
         public DocumentExport(Document document)
