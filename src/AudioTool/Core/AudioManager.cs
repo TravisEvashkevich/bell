@@ -3,22 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Microsoft.Xna.Framework.Audio;
+using Xceed.Wpf.Toolkit.Core.Converters;
 
 namespace AudioTool.Core
 {
-    public class SoundStateChangedEventArgs : EventArgs
-    {
-        public SoundEffectInstance Instance { get; set; }
-
-        public SoundState OldState { get; set; }
-    }
-
     public static class AudioManager
     {
         public static Dictionary<SoundEffectInstance, SoundState> States;
-
         public static event EventHandler<SoundStateChangedEventArgs> SoundStateChanged;
 
+        private static readonly object Sync = new object();
         private static Timer _timer;
 
         static AudioManager()
@@ -29,7 +23,10 @@ namespace AudioTool.Core
 
         private static void TimerCallback(object state)
         {
-            CheckSoundEffectInstanceState();
+            lock (Sync)
+            {
+                CheckSoundEffectInstanceState();
+            }
         }
 
         private static void CheckSoundEffectInstanceState()
@@ -49,7 +46,9 @@ namespace AudioTool.Core
                             States[state.Key] = state.Key.State;
 
                             if (SoundStateChanged != null)
+                            {
                                 SoundStateChanged(null, e);
+                            }
                         }
                     }
             }
@@ -57,12 +56,18 @@ namespace AudioTool.Core
 
         public static void AddSoundInstance(SoundEffectInstance instance)
         {
-            States.Add(instance, instance.State);
+            lock (Sync)
+            {
+                States.Add(instance, instance.State);
+            }
         }
 
         public static void RemoveSoundInstance(SoundEffectInstance instance)
         {
-            States.Remove(instance);
+            lock (Sync)
+            {
+                States.Remove(instance);
+            }
         }
     }
 }

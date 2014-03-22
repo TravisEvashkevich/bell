@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
-using System.Windows.Controls;
 using AudioTool.Core;
 using Microsoft.Win32;
 using Microsoft.Xna.Framework.Audio;
@@ -16,12 +10,12 @@ using Newtonsoft.Json;
 
 namespace AudioTool.Data
 {
-//    - Parallel (all sounds in the cue play at the same time)
-//- Serial (all sounds play one after the other)
-//- Cycle(first cue plays sound1, second cue plays sound2, repeating etc.)
-//- Random (each cue plays randomly one of the sounds in it)
-//- RandomCycle (each cue plays randomly but does not replay a sound until all other sounds have been played, 
-//i.e. sound1, sound3, sound2, sound1, for a three sound cue)
+    //- Parallel (all sounds in the cue play at the same time)
+    //- Serial (all sounds play one after the other)
+    //- Cycle(first cue plays sound1, second cue plays sound2, repeating etc.)
+    //- Random (each cue plays randomly one of the sounds in it)
+    //- RandomCycle (each cue plays randomly but does not replay a sound until all other sounds have been played, 
+    //i.e. sound1, sound3, sound2, sound1, for a three sound cue)
     public enum CuePlaybackMode
     {
         Parallel,
@@ -162,7 +156,6 @@ namespace AudioTool.Data
 
         #endregion
 
-
         private void PlayParallel()
         {
             foreach (Sound sound in Children)
@@ -218,7 +211,6 @@ namespace AudioTool.Data
                 _timer.Stop();
                 Playing = false;
             }
-
         }
 
         private void PlayCycle()
@@ -239,6 +231,7 @@ namespace AudioTool.Data
                 PlayCycle();
             }
         }
+
         [JsonIgnore]
         private List<INode> _soundsListToUse = new List<INode>(); 
 
