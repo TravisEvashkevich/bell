@@ -10,6 +10,9 @@
     <Window.DataContext>
         <Binding Path="MainWindow" Source="{StaticResource Locator}"/>
     </Window.DataContext>
+    <Window.InputBindings>
+        <KeyBinding Modifiers="Control" Key="S" Command="{Binding SaveDocumentCommand}"/>
+    </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>

@@ -1,11 +1,11 @@
-﻿<Window x:Class="AudioTool.Views.Preferences"
+﻿<UserControl x:Class="AudioTool.Views.Preferences"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-        Title="Preferences" Height="398" Width="402.639">
-    <Window.DataContext>
+         Height="398" Width="402.639">
+    <UserControl.DataContext>
         <Binding Path="Preferences" Source="{StaticResource Locator}"/>
-    </Window.DataContext>
+    </UserControl.DataContext>
     <Grid>
         <GroupBox Header="Stubs Colors" HorizontalAlignment="Right" Margin="0,0,11,104" VerticalAlignment="Bottom" Height="251" Width="372">
             <Grid>
@@ -22,4 +22,4 @@
         <Button Content="Save" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="75" Command="{Binding SaveCommand}"/>
 
     </Grid>
-</Window>
+</UserControl>

@@ -30,9 +30,12 @@
     <DataTemplate DataType="{x:Type viewModel:CueViewVM}">
         <views:CueView HorizontalAlignment="Left" VerticalAlignment="Top"/>
     </DataTemplate>
+    <DataTemplate DataType="{x:Type viewModel:PreferencesVM}">
+        <views:Preferences HorizontalAlignment="Left" VerticalAlignment="Top"/>
+    </DataTemplate>
 
     <HierarchicalDataTemplate DataType="{x:Type data:Document}" ItemsSource="{Binding Path=Children, Converter={StaticResource OrderNodesConverter}}">
-        <Border MinWidth="250" BorderBrush="{Binding Default.DocumentStubColor, Source={StaticResource Settings}, Converter={StaticResource ColorToBrushConterver}}" Background="{Binding Default.DocumentStubColor, Source={StaticResource Settings}, Mode=TwoWay, Converter={StaticResource ColorToBrushConterver}}"  BorderThickness="1" CornerRadius="2" Margin="2" Padding="2" Height="40" >
+        <Border MinWidth="250" Background="{Binding Default.DocumentStubColor, Source={StaticResource Settings}, Mode=TwoWay, Converter={StaticResource ColorToBrushConterver}}"  BorderThickness="1" CornerRadius="2" Margin="2" Padding="2" Height="40" >
             <Grid>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto"/>
@@ -50,7 +53,7 @@
     </HierarchicalDataTemplate>
 
     <HierarchicalDataTemplate DataType="{x:Type data:Folder}" ItemsSource="{Binding Children, Converter={StaticResource OrderNodesConverter}}">
-        <Border MinWidth="250"  Background="{Binding FolderStubColor, Source={StaticResource Settings}, Converter={StaticResource ColorToBrushConterver}}" BorderThickness="1" CornerRadius="2" Margin="2" Padding="2" Height="40">
+        <Border MinWidth="250"  Background="{Binding Default.FolderStubColor, Source={StaticResource Settings}, Converter={StaticResource ColorToBrushConterver}}" BorderThickness="1" CornerRadius="2" Margin="2" Padding="2" Height="40">
             <Grid>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto"/>
@@ -73,7 +76,7 @@
     </HierarchicalDataTemplate>
 
     <HierarchicalDataTemplate DataType="{x:Type data:Cue}" ItemsSource="{Binding Children}">
-        <Border MinWidth="250"  Background="{Binding CueStubColor, Source={StaticResource Settings}, Converter={StaticResource ColorToBrushConterver}}" BorderThickness="1" CornerRadius="2" Margin="2" Padding="2" Height="40" >
+        <Border MinWidth="250"  Background="{Binding Default.CueStubColor, Source={StaticResource Settings}, Converter={StaticResource ColorToBrushConterver}}" BorderThickness="1" CornerRadius="2" Margin="2" Padding="2" Height="40" >
             <Grid>
                 <Grid.RowDefinitions>
 					<RowDefinition Height="Auto"/>
@@ -111,7 +114,7 @@
         </Border>
     </HierarchicalDataTemplate>
     <HierarchicalDataTemplate DataType="{x:Type data:Sound}" >
-        <Border MinWidth="250" Background="{Binding SoundStubColor, Source={StaticResource Settings}, Converter={StaticResource ColorToBrushConterver}}" BorderThickness="1" CornerRadius="2" Margin="2" Padding="2" Height="40" >
+        <Border MinWidth="250" Background="{Binding Default.SoundStubColor, Source={StaticResource Settings}, Converter={StaticResource ColorToBrushConterver}}" BorderThickness="1" CornerRadius="2" Margin="2" Padding="2" Height="40" >
             <Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition></ColumnDefinition>

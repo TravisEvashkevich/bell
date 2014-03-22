@@ -194,8 +194,7 @@ namespace AudioTool.ViewModel
 
         public void ExecuteOpenPreferencesWindowCommand(object o)
         {
-            var preferencesWindow = new Preferences();
-            preferencesWindow.ShowDialog();
+            CurrentView = _viewModelLocator.Preferences;
         }
 
         public SmartCommand<object> SaveAsCommand { get; private set; }
