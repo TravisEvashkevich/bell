@@ -16,7 +16,7 @@ namespace AudioTool.Data
             set
             {
                 Set(ref _folders, value);
-                Glue.DocumentIsSaved = false;
+                Glue.Instance.DocumentIsSaved = false;
             }
         }
 
@@ -29,7 +29,7 @@ namespace AudioTool.Data
             set
             {
                 Set(ref _cues, value);
-                Glue.DocumentIsSaved = false;
+                Glue.Instance.DocumentIsSaved = false;
             }
         }
 
@@ -43,7 +43,7 @@ namespace AudioTool.Data
             set
             {
                 Set(ref _children, value);
-                Glue.DocumentIsSaved = false;
+                Glue.Instance.DocumentIsSaved = false;
             }
         }
 

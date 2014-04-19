@@ -19,6 +19,19 @@ namespace AudioTool.Data
 
         protected string _name;
 
+        private bool _isVisible = true;
+        public virtual bool IsVisible { get { return _isVisible; } set { Set(ref _isVisible, value); } }
+
+        private bool _expanded;
+        public bool Expanded
+        {
+            get { return _expanded; }
+            set
+            {
+                Set(ref _expanded, value);
+            }
+        }
+
         [JsonProperty("name")]
         public virtual string Name
         {
@@ -26,7 +39,7 @@ namespace AudioTool.Data
             set
             {
                 Set(ref _name, value);
-                Glue.DocumentIsSaved = false;
+                Glue.Instance.DocumentIsSaved = false;
             }
         }
 
@@ -43,7 +56,7 @@ namespace AudioTool.Data
             set
             {
                 Set(ref _children, value);
-                Glue.DocumentIsSaved = false;
+                Glue.Instance.DocumentIsSaved = false;
             }
         }
 

@@ -120,16 +120,15 @@ namespace AudioTool.Converters
         {
             if (value is bool)
             {
-                var glue = ServiceLocator.Current.GetInstance<Glue>();
-                if (glue.Document != null)
+                if (Glue.Instance.Document != null)
                 {
-                    if (glue.DocumentIsSaved)
+                    if (Glue.Instance.DocumentIsSaved)
                     {
-                        return "Audio Utility [" + glue.Document.Filename + "]";
+                        return "Audio Utility [" + Glue.Instance.Document.Filename + "]";
                     }
                     else
                     {
-                        return "Audio Utility [" + glue.Document.Filename + "*]";
+                        return "Audio Utility [" + Glue.Instance.Document.Filename + "*]";
                     }
                 }
                 else

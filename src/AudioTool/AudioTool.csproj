@@ -87,6 +87,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\BooleanToVisiblityConverter.cs" />
     <Compile Include="Core\AudioManager.cs" />
     <Compile Include="Core\Helper.cs" />
     <Compile Include="Core\SoundStateChangedEventArgs.cs" />
@@ -102,6 +103,7 @@
     <Compile Include="ViewModel\CueViewVM.cs" />
     <Compile Include="ViewModel\MainWindowVM.cs" />
     <Compile Include="ViewModel\PreferencesVM.cs" />
+    <Compile Include="ViewModel\SearchFilterVM.cs" />
     <Compile Include="ViewModel\SoundViewVM.cs" />
     <Compile Include="Views\DocumentView.xaml.cs">
       <DependentUpon>DocumentView.xaml</DependentUpon>
@@ -114,6 +116,9 @@
     </Compile>
     <Compile Include="Views\Preferences.xaml.cs">
       <DependentUpon>Preferences.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SearchFilterView.xaml.cs">
+      <DependentUpon>SearchFilterView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SoundView.xaml.cs">
       <DependentUpon>SoundView.xaml</DependentUpon>
@@ -162,6 +167,10 @@
     <Page Include="Views\Preferences.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SearchFilterView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SoundView.xaml">
       <SubType>Designer</SubType>

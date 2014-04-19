@@ -49,6 +49,7 @@ namespace AudioTool.Core
             SimpleIoc.Default.Register<SoundViewVM>();
             SimpleIoc.Default.Register<CueViewVM>();
             SimpleIoc.Default.Register<Glue>();
+            SimpleIoc.Default.Register<SearchFilterVM>();
         }
 
 
@@ -97,6 +98,16 @@ namespace AudioTool.Core
             get
             {
                 return ServiceLocator.Current.GetInstance<CueViewVM>();
+            }
+        }
+
+        public SearchFilterVM SearchFilter
+        {
+            get
+            {
+                var instance = ServiceLocator.Current.GetInstance<SearchFilterVM>();
+                return instance;
+
             }
         }
 

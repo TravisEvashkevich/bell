@@ -4,6 +4,18 @@ namespace AudioTool.Core
 {
     public class Glue : MainViewModel
     {
+
+        private static Glue _instance;
+        public static Glue Instance
+        {
+            get
+            {
+                if (_instance == null)
+                    _instance = new Glue();
+                return _instance;
+            }
+        }
+
         private bool _documentIsSaved;
         public bool DocumentIsSaved
         {
