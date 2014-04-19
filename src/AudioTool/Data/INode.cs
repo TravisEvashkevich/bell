@@ -19,6 +19,19 @@ namespace AudioTool.Data
 
         protected string _name;
 
+        private bool _isVisible = true;
+        public virtual bool IsVisible { get { return _isVisible; } set { Set(ref _isVisible, value); } }
+
+        private bool _expanded;
+        public bool Expanded
+        {
+            get { return _expanded; }
+            set
+            {
+                Set(ref _expanded, value);
+            }
+        }
+
         [JsonProperty("name")]
         public virtual string Name
         {

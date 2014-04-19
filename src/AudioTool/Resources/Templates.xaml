@@ -16,6 +16,7 @@
     <converters:CueChildrenCountToHeader x:Key="CueChildrenCountToHeader" />
     <converters:CueChildrenCountToVisibility x:Key="CueChildrenCountToVisibility" />
     <converters:SoundStateToVisibilityConverter x:Key="SoundStateToVisibilityConverter" />
+    <converters:BooleanToVisiblityConverter x:Key="BooleanToVisiblityConverter"/>
     
     <properties:Settings x:Key="Settings" />
     <DataTemplate DataType="{x:Type viewModel:DocumentViewVM}">
@@ -34,7 +35,9 @@
         <views:Preferences HorizontalAlignment="Left" VerticalAlignment="Top"/>
     </DataTemplate>
 
-    <HierarchicalDataTemplate DataType="{x:Type data:Document}" ItemsSource="{Binding Path=Children, Converter={StaticResource OrderNodesConverter}}">
+    <Style x:Key="SearchableTreeView" TargetType="{x:Type TreeView}">
+        <Style.Resources>
+            <HierarchicalDataTemplate DataType="{x:Type data:Document}" ItemsSource="{Binding Path=Children, Converter={StaticResource OrderNodesConverter}}">
         <Border MinWidth="250" Background="{Binding Default.DocumentStubColor, Source={StaticResource Settings}, Mode=TwoWay, Converter={StaticResource ColorToBrushConterver}}"  BorderThickness="1" CornerRadius="2" Margin="2" Padding="2" Height="40" >
             <Grid>
 				<Grid.RowDefinitions>
@@ -51,6 +54,23 @@
             </Border.ContextMenu>
         </Border>
     </HierarchicalDataTemplate>
+        </Style.Resources>
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="BorderThickness" Value="1.5"/>
+                    <Setter Property="IsExpanded" Value="{Binding Path=Expanded, Mode=TwoWay}" />
+                    <Setter Property="Visibility" Value="{Binding Path=IsVisible, Mode=OneWay, Converter={StaticResource ResourceKey=BooleanToVisiblityConverter}}"/>
+                    <Style.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="3"/>
+                        </Style>
+                    </Style.Resources>
+                </Style>
+            </Setter.Value>
+        </Setter>
+
+    </Style>
 
     <HierarchicalDataTemplate DataType="{x:Type data:Folder}" ItemsSource="{Binding Children, Converter={StaticResource OrderNodesConverter}}">
         <Border MinWidth="250"  Background="{Binding Default.FolderStubColor, Source={StaticResource Settings}, Converter={StaticResource ColorToBrushConterver}}" BorderThickness="1" CornerRadius="2" Margin="2" Padding="2" Height="40">
