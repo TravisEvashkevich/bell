@@ -6,7 +6,7 @@
         xmlns:views="clr-namespace:AudioTool.Views"
         xmlns:viewModel="clr-namespace:AudioTool.ViewModel"
         xmlns:core="clr-namespace:AudioTool.Core"
-        Title="{Binding Glue.DocumentIsSaved, Converter={StaticResource IsDocumentSavedToHeaderConverter}}" Height="436" Width="525" core:WindowClosingBehavior.Closing="{Binding ClosingCommand}">
+        Title="{Binding Glue.Instance.DocumentIsSaved, Converter={StaticResource IsDocumentSavedToHeaderConverter}}" Height="436" Width="525" core:WindowClosingBehavior.Closing="{Binding ClosingCommand}">
     <Window.DataContext>
         <Binding Path="MainWindow" Source="{StaticResource Locator}"/>
     </Window.DataContext>
@@ -20,13 +20,13 @@
         </Grid.RowDefinitions>
         <Menu Margin="0" Grid.Row="0">
             <MenuItem Header="File">
-                <MenuItem Header="New" HorizontalAlignment="Left" Command="{Binding NewDocumentCommand}" />
-                <MenuItem Header="Open" HorizontalAlignment="Left" Command="{Binding OpenDocumentCommand}" />
-                <MenuItem Header="Save" HorizontalAlignment="Left" Command="{Binding SaveDocumentCommand}" />
-                <MenuItem Header="Save As" HorizontalAlignment="Left" Command="{Binding SaveAsCommand}" />
-                <MenuItem Header="Close" HorizontalAlignment="Left" Command="{Binding CloseCommand}" />
+                <MenuItem Header="New" HorizontalAlignment="Left" Command="{Binding NewDocumentCommand}" InputGestureText="Ctrl + N" />
+                <MenuItem Header="Open" HorizontalAlignment="Left" Command="{Binding OpenDocumentCommand}" InputGestureText="Ctrl + O"/>
+                <MenuItem Header="Save" HorizontalAlignment="Left" Command="{Binding SaveDocumentCommand}" InputGestureText="Ctrl + S"/>
+                <MenuItem Header="Save As" HorizontalAlignment="Left" Command="{Binding SaveAsCommand}" InputGestureText="Ctrl + Shift + S" />
+                <MenuItem Header="Close" HorizontalAlignment="Left" Command="{Binding CloseCommand}" InputGestureText="Ctrl + Q"/>
                 <Separator></Separator>
-                <MenuItem Header="Export" HorizontalAlignment="Left" Command="{Binding ExportCommand}" />
+                <MenuItem Header="Export" HorizontalAlignment="Left" Command="{Binding ExportCommand}" InputGestureText="Ctrl + E" />
             </MenuItem>
             <MenuItem Header="Preferences" Command="{Binding OpenPreferencesWindowCommand}">
             </MenuItem>

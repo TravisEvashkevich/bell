@@ -28,7 +28,7 @@ namespace AudioTool.Data
             var json = Core.JsonSerializer.Serialize(this);
             File.WriteAllText(Filename, json);
 
-            Glue.DocumentIsSaved = true;
+            Glue.Instance.DocumentIsSaved = true;
         }
 
         public static Document Open()
@@ -72,7 +72,7 @@ namespace AudioTool.Data
             set
             {
                 Set(ref _children, value);
-                Glue.DocumentIsSaved = false;
+                Glue.Instance.DocumentIsSaved = false;
             }
         }
 
@@ -84,7 +84,7 @@ namespace AudioTool.Data
             set
             {
                 Set(ref _filename, value);
-                Glue.DocumentIsSaved = false;
+                Glue.Instance.DocumentIsSaved = false;
             }
         }
 

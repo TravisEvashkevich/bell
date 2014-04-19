@@ -26,7 +26,7 @@ namespace AudioTool.Data
             set
             {
                 Set(ref _filePath, value);
-                Glue.DocumentIsSaved = false;
+                Glue.Instance.DocumentIsSaved = false;
             }
         }
 
@@ -43,7 +43,7 @@ namespace AudioTool.Data
             set
             {
                 Set(ref _data, value);
-                Glue.DocumentIsSaved = false;
+                Glue.Instance.DocumentIsSaved = false;
             }
         }
 
@@ -76,7 +76,7 @@ namespace AudioTool.Data
             set
             {
                 Set(ref _instances, value);
-                Glue.DocumentIsSaved = false;
+                Glue.Instance.DocumentIsSaved = false;
             }
         }
 
@@ -99,7 +99,7 @@ namespace AudioTool.Data
                 {
                     PlayingInstance.Pitch = (Parent as Cue).Pitch;
                 }
-                Glue.DocumentIsSaved = false;
+                Glue.Instance.DocumentIsSaved = false;
             }
         }
 
@@ -122,7 +122,7 @@ namespace AudioTool.Data
                 {
                     PlayingInstance.Volume = (Parent as Cue).Volume;
                 }
-                Glue.DocumentIsSaved = false;
+                Glue.Instance.DocumentIsSaved = false;
             }
         }
 
@@ -145,7 +145,7 @@ namespace AudioTool.Data
                 {
                     PlayingInstance.Pan = (Parent as Cue).Pan;
                 }
-                Glue.DocumentIsSaved = false;
+                Glue.Instance.DocumentIsSaved = false;
             }
         }
 
@@ -162,7 +162,7 @@ namespace AudioTool.Data
             set
             {
                 Set(ref _looped, value);
-                Glue.DocumentIsSaved = false;
+                Glue.Instance.DocumentIsSaved = false;
             }
         }
 

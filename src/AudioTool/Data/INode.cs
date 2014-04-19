@@ -39,7 +39,7 @@ namespace AudioTool.Data
             set
             {
                 Set(ref _name, value);
-                Glue.DocumentIsSaved = false;
+                Glue.Instance.DocumentIsSaved = false;
             }
         }
 
@@ -56,7 +56,7 @@ namespace AudioTool.Data
             set
             {
                 Set(ref _children, value);
-                Glue.DocumentIsSaved = false;
+                Glue.Instance.DocumentIsSaved = false;
             }
         }
 
