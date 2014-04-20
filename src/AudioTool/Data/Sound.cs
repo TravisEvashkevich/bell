@@ -32,7 +32,27 @@ namespace AudioTool.Data
 
         #endregion
 
-        #region Data	
+        #region FileLastModified
+
+        private DateTime _fileLastModified;
+
+        [JsonProperty("FileLastModified")]
+        public DateTime FileLastModified 
+        {
+            get
+            {
+                return _fileLastModified;
+            }
+            set
+            {
+                Set(ref _fileLastModified, value);
+                Glue.Instance.DocumentIsSaved = false;
+            }
+        }
+
+        #endregion
+
+        #region Data
 
         private byte[] _data;
 
@@ -47,7 +67,7 @@ namespace AudioTool.Data
             }
         }
 
-        #endregion
+        #endregion  
 
         #region SoundEffect	
 
@@ -193,9 +213,14 @@ namespace AudioTool.Data
             soundfile.Close();
             soundfile.Dispose();
             FilePath = path;
+            //Save the last modified time so that way we can use a "ReImport All" or "ReImport Selected"
+            //command to just check the date times. If the last write time was older than the current, reimport and overwrite
+            FileLastModified = File.GetLastWriteTime(path).ToUniversalTime();
+
             Name = Path.GetFileNameWithoutExtension(FilePath);
             PlayingInstance = SoundEffect.CreateInstance();
             AudioManager.AddSoundInstance(PlayingInstance);
+            
         }
 
         [JsonConstructor]
@@ -419,6 +444,7 @@ namespace AudioTool.Data
         }
 
         #endregion
+
 
 
         public override void Remove()

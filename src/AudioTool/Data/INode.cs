@@ -19,10 +19,13 @@ namespace AudioTool.Data
 
         protected string _name;
 
+        
         private bool _isVisible = true;
+        [JsonIgnore]
         public virtual bool IsVisible { get { return _isVisible; } set { Set(ref _isVisible, value); } }
 
         private bool _expanded;
+        [JsonIgnore]
         public bool Expanded
         {
             get { return _expanded; }
@@ -65,7 +68,11 @@ namespace AudioTool.Data
         public virtual void Remove()
         {
             if (Parent != null)
+            {
                 Parent.Children.Remove(this);
+                Glue.Instance.DocumentIsSaved = false;
+            }
+
         }
 
         public void AddChild(INode child)

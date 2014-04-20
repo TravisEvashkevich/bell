@@ -302,6 +302,17 @@ namespace AudioTool.ViewModel
         }
         #endregion
 
+        #region ReImportSounds Command
+
+        public SmartCommand<object> ReImportSoundCommand { get; private set; }
+
+        public void ExecuteReImportSoundCommand(object obj)
+        {
+            //Call stuff on Documents
+        }
+
+        #endregion
+
         protected override void InitializeCommands()
         {
             ClosingCommand = new SmartCommand<object>(ExecuteClosingCommand, CanExecuteClosingCommand);  
@@ -314,6 +325,7 @@ namespace AudioTool.ViewModel
             CloseCommand = new SmartCommand<object>(ExecuteCloseCommand, CanExecuteCloseCommand);
             ExportCommand = new SmartCommand<object>(ExecuteExportCommand, CanExecuteExportCommand);
             RemoveCommand = new SmartCommand<object>(ExecuteRemoveCommand, CanExecuteRemoveCommand);
+            ReImportSoundCommand = new SmartCommand<object>(ExecuteReImportSoundCommand);
         }
         #endregion
 
