@@ -450,6 +450,32 @@ namespace AudioTool.Data
             base.Remove();
         }
 
+        #region ReimportNewVersionCommand
+        public SmartCommand<object> ReImportNewVersionCommand { get; private set; }
+
+        public void ExecuteReImportNewVersion(object obj)
+        {
+            var path = obj as string;
+            //Does a reimport with the same file path as what the old file was.
+            var soundfile = new FileStream(path, FileMode.Open);
+            SoundEffect = SoundEffect.FromStream(soundfile);
+            soundfile.Close();
+            soundfile.Dispose();
+            soundfile = new FileStream(path, FileMode.Open);
+            Data = Helper.ReadFully(soundfile);
+            soundfile.Close();
+            soundfile.Dispose();
+            FilePath = path;
+            //Save the last modified time so that way we can use a "ReImport All" or "ReImport Selected"
+            //command to just check the date times. If the last write time was older than the current, reimport and overwrite
+            FileLastModified = File.GetLastWriteTime(path).ToUniversalTime();
+
+            Name = Path.GetFileNameWithoutExtension(FilePath);
+            PlayingInstance = SoundEffect.CreateInstance();
+            AudioManager.AddSoundInstance(PlayingInstance);
+        }
+        #endregion
+
         #region ReimportCommand
         public SmartCommand<object> ReImportCommand { get; private set; }
 
@@ -485,6 +511,7 @@ namespace AudioTool.Data
             StopCommand = new SmartCommand<object>(ExecuteStopCommand, CanExecuteStopCommand);
             PauseCommand = new SmartCommand<object>(ExecutePauseCommand, CanExecutePauseCommand);
             ReImportCommand = new SmartCommand<object>(ExecuteReImport);
+            ReImportNewVersionCommand = new SmartCommand<object>(ExecuteReImportNewVersion);
 
             base.InitializeCommands();
         }

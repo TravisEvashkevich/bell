@@ -302,36 +302,70 @@ namespace AudioTool.ViewModel
         }
         #endregion
 
-        #region ReImportSounds Command
+        #region ReImportSelectedSound Command
 
-        public SmartCommand<object> ReImportSoundCommand { get; private set; }
+        public SmartCommand<object> ReImportSelectedSoundCommand { get; private set; }
 
-        public void ExecuteReImportSoundCommand(object obj)
+        public void ExecuteReImportSelectedSoundCommand(object obj)
         {
             //Reimport called on the current Selected sound (the one you clicked etc)
             if (_currentSelectedNode is Sound)
             {
                 var sound = _currentSelectedNode as Sound;
-                //check to see if the file at the saved path is newer or notw
-                var date = File.GetLastWriteTime(sound.FilePath).ToUniversalTime();
-
-                //if the year is less than 2013 then it's probably a dummy value (which I was getting when you try to read from an invalid file path)
-                if (date.Year > 2013)
+                //quick check to see if the file even exists
+                if (!File.Exists(sound.FilePath))
                 {
+                    //Search says it doesn't exist, inform the user to FIND the file
+                    if (MessageBox.Show("The file doesn't exist at the old path, would you like to find the file?",
+                        "Missing File.", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                    {
+                        //The thing is, the filename could have technically changed or have a different syntax or something
+                        var dialog = new OpenFileDialog();
+
+                        bool? result = dialog.ShowDialog();
+                        if (result == true)
+                        {
+                            //we'll check the filename they selected against the filename in the sound and ask if they want to overwrite
+                            //if they are different
+                            //get the path
+                            string fileName = Path.GetFileNameWithoutExtension(dialog.FileName);
+                            var endIndex = fileName.LastIndexOf('\\');
+                            //for the sake of it, we get the index, then add one so we keep the backslash as well in the substring
+                            fileName = fileName.Substring(endIndex + 1, fileName.Length-1);
+
+                            if (fileName != sound.Name)
+                            {
+                                if (MessageBox.Show(
+                                        "The selected file has a different name than what you are trying to overwrite. Would you like to proceed anyway?",
+                                        "FileName doesn't match", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                                {
+                                    //pass the filename from the dialog to the Reimport new version so it will Create and overwrite
+                                    //the sound thus updating in the program.
+                                    sound.ExecuteReImportNewVersion(dialog.FileName);
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    //check to see if the file at the saved path is newer or notw
+                    var date = File.GetLastWriteTime(sound.FilePath).ToUniversalTime();
+
                     if (date > sound.FileLastModified)
                     {
                         sound.ExecuteReImport(sound);
+                        MessageBox.Show("Sound successfully Reimported!");
                     }
-                    else
+                    else if (date < sound.FileLastModified)
                     {
                         //we inform the user that the file is not newer than the version they are using and ask if they want to reimport anyways
                         if (MessageBox.Show(
-                                "The file that would be imported is older than the current. Are you sure you want to import over your current file?",
-                                "Warning", MessageBoxButton.YesNoCancel) == MessageBoxResult.Yes)
+                            "The file that would be imported is older than the current. Are you sure you want to import over your current file?",
+                            "Warning", MessageBoxButton.YesNoCancel) == MessageBoxResult.Yes)
                         {
                             sound.ExecuteReImport(sound);
                         }
-                        
                     }
                 }
             }
@@ -382,7 +416,7 @@ namespace AudioTool.ViewModel
             CloseCommand = new SmartCommand<object>(ExecuteCloseCommand, CanExecuteCloseCommand);
             ExportCommand = new SmartCommand<object>(ExecuteExportCommand, CanExecuteExportCommand);
             RemoveCommand = new SmartCommand<object>(ExecuteRemoveCommand, CanExecuteRemoveCommand);
-            ReImportSoundCommand = new SmartCommand<object>(ExecuteReImportSoundCommand);
+            ReImportSelectedSoundCommand = new SmartCommand<object>(ExecuteReImportSelectedSoundCommand);
         }
         #endregion
 
