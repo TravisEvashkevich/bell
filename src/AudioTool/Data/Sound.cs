@@ -217,10 +217,9 @@ namespace AudioTool.Data
             //command to just check the date times. If the last write time was older than the current, reimport and overwrite
             FileLastModified = File.GetLastWriteTime(path).ToUniversalTime();
 
-            Name = Path.GetFileNameWithoutExtension(FilePath);
+            Name = Path.GetFileNameWithoutExtension(path);
             PlayingInstance = SoundEffect.CreateInstance();
             AudioManager.AddSoundInstance(PlayingInstance);
-            
         }
 
         [JsonConstructor]
@@ -445,13 +444,36 @@ namespace AudioTool.Data
 
         #endregion
 
-
-
         public override void Remove()
         {
             Stop();
             base.Remove();
         }
+
+        #region ReimportCommand
+        public SmartCommand<object> ReImportCommand { get; private set; }
+
+        public void ExecuteReImport(object obj)
+        {
+            //Does a reimport with the same file path as what the old file was.
+            var soundfile = new FileStream(FilePath, FileMode.Open);
+            SoundEffect = SoundEffect.FromStream(soundfile);
+            soundfile.Close();
+            soundfile.Dispose();
+            soundfile = new FileStream(FilePath, FileMode.Open);
+            Data = Helper.ReadFully(soundfile);
+            soundfile.Close();
+            soundfile.Dispose();
+            FilePath = FilePath;
+            //Save the last modified time so that way we can use a "ReImport All" or "ReImport Selected"
+            //command to just check the date times. If the last write time was older than the current, reimport and overwrite
+            FileLastModified = File.GetLastWriteTime(FilePath).ToUniversalTime();
+
+            Name = Path.GetFileNameWithoutExtension(FilePath);
+            PlayingInstance = SoundEffect.CreateInstance();
+            AudioManager.AddSoundInstance(PlayingInstance);
+        }
+        #endregion
 
         protected override void InitializeCommands()
         {
@@ -462,6 +484,7 @@ namespace AudioTool.Data
             PlayCommand = new SmartCommand<object>(ExecutePlayCommand, CanExecutePlayCommand);
             StopCommand = new SmartCommand<object>(ExecuteStopCommand, CanExecuteStopCommand);
             PauseCommand = new SmartCommand<object>(ExecutePauseCommand, CanExecutePauseCommand);
+            ReImportCommand = new SmartCommand<object>(ExecuteReImport);
 
             base.InitializeCommands();
         }

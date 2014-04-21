@@ -308,7 +308,64 @@ namespace AudioTool.ViewModel
 
         public void ExecuteReImportSoundCommand(object obj)
         {
-            //Call stuff on Documents
+            //Reimport called on the current Selected sound (the one you clicked etc)
+            if (_currentSelectedNode is Sound)
+            {
+                var sound = _currentSelectedNode as Sound;
+                //check to see if the file at the saved path is newer or notw
+                var date = File.GetLastWriteTime(sound.FilePath).ToUniversalTime();
+
+                //if the year is less than 2013 then it's probably a dummy value (which I was getting when you try to read from an invalid file path)
+                if (date.Year > 2013)
+                {
+                    if (date > sound.FileLastModified)
+                    {
+                        sound.ExecuteReImport(sound);
+                    }
+                    else
+                    {
+                        //we inform the user that the file is not newer than the version they are using and ask if they want to reimport anyways
+                        if (MessageBox.Show(
+                                "The file that would be imported is older than the current. Are you sure you want to import over your current file?",
+                                "Warning", MessageBoxButton.YesNoCancel) == MessageBoxResult.Yes)
+                        {
+                            sound.ExecuteReImport(sound);
+                        }
+                        
+                    }
+                }
+            }
+            /*foreach (var document in Documents)
+            {
+                foreach (var child in document.Children)
+                {
+                    if (child is Sound)
+                    {
+                        var sound = child as Sound;
+                        //check to see if the file at the saved path is newer or notw
+                        var date = File.GetLastWriteTime(sound.FilePath).ToUniversalTime();
+
+                        //if the year is less than 2013 then it's probably a dummy value (which I was getting when you try to read from an invalid file path)
+                        if (date.Year > 2013)
+                        {
+                            if (date > sound.FileLastModified)
+                            {
+                                sound.ExecuteReImport(sound);
+                            }
+                            else
+                            {
+                                //we inform the user that the file is not newer than the version they are using and ask if they want to reimport anyways
+
+                            }
+                        }
+                        else
+                        {
+                            //more than likely just an invalid path so we give the user a chance to find the file themselves
+
+                        }
+                    }
+                }
+            }*/
         }
 
         #endregion
