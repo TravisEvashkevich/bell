@@ -215,6 +215,11 @@ namespace AudioTool.Data
 
         private void PlayCycle()
         {
+            //Check for index count BEFORE playing the cycle so that way we don't have to do a full extra click before playing
+            //and also doesn't do the recursive call it prev did which made it loop constantly
+            if (_playingIndex >= Children.Count)
+                _playingIndex = 0;
+
             if (Playing && _playingIndex < Children.Count)
             {
                 var sound = Children[_playingIndex] as Sound;
@@ -225,11 +230,9 @@ namespace AudioTool.Data
                 _timer.Interval = duration.TotalMilliseconds;
                 _timer.Start();
             }
-            else
-            {
-                _playingIndex = 0;
-                PlayCycle();
-            }
+
+
+            
         }
 
         [JsonIgnore]
@@ -263,7 +266,8 @@ namespace AudioTool.Data
         {
             Playing = true;
             _soundsListToUse = new List<INode>(Children);
-            _playingIndex = 0;
+            //This should be handeled within each playback method instead of out here (cause it causes things like Cycle to die)
+            /*_playingIndex = 0;*/
 
             switch (_playbackInUse)
             {
@@ -332,7 +336,10 @@ namespace AudioTool.Data
 
         public bool CanExecutePlaySerialCommand(object o)
         {
-            return !Playing && Children.Count > 1;
+            //Doesn't make sense to make this NOT playable via the stub if only 1 child
+            //What's it matter really besides making it harder and more aggrivating to use if you 
+            //have to go one layer deeper just to play the sound.
+            return !Playing /*&& Children.Count > 1*/;
         }
 
         public void ExecutePlaySerialCommand(object o)
@@ -386,7 +393,7 @@ namespace AudioTool.Data
 
         public bool CanExecutePlayRandomCycleCommand(object o)
         {
-            return !Playing && Children.Count > 1;
+            return !Playing /*&& Children.Count > 1*/;
         }
 
         public async void ExecutePlayRandomCycleCommand(object o)

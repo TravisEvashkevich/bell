@@ -289,6 +289,7 @@ namespace AudioTool.Data
                 PlayingInstance.Play();
             else
             {
+                
                 PlayingInstance.Stop();
                 AudioManager.RemoveSoundInstance(PlayingInstance);
                 PlayingInstance.Dispose();
@@ -302,7 +303,9 @@ namespace AudioTool.Data
 
         public void Stop()
         {
-                PlayingInstance.Stop();
+            PlayingInstance.Stop();
+            var par = Parent as Cue;
+            par.Playing = false;
         }
 
         public void Pause()
@@ -439,6 +442,12 @@ namespace AudioTool.Data
             set
             {
                 Set(ref _soundState, value);
+                if (value == SoundState.Stopped && Parent != null)
+                {
+                    //EASIEST way to make sure the Sound and the Cue buttons are in sync for when a sound has ended
+                    var parent = Parent as Cue;
+                    parent.Playing = false;
+                }
             }
         }
 
