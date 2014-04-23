@@ -197,8 +197,13 @@ namespace AudioTool.Data
 
         void AudioManager_SoundStateChanged(object sender, SoundStateChangedEventArgs e)
         {
-            Application.Current.Dispatcher.BeginInvoke(
-              new Action(() => SoundState = PlayingInstance.State));
+            if(!PlayingInstance.IsDisposed)
+            {
+                //Seems that the PlayingInstance on one thread can be out of sync (disposed)
+                //even though on this thread it is not? Only thing I can come up with.
+                Application.Current.Dispatcher.BeginInvoke(
+                    new Action(() => SoundState = PlayingInstance.State));
+            }
         }
 
         public Sound(string path)
@@ -304,8 +309,6 @@ namespace AudioTool.Data
         public void Stop()
         {
             PlayingInstance.Stop();
-            var par = Parent as Cue;
-            par.Playing = false;
         }
 
         public void Pause()
@@ -446,6 +449,7 @@ namespace AudioTool.Data
                 {
                     //EASIEST way to make sure the Sound and the Cue buttons are in sync for when a sound has ended
                     var parent = Parent as Cue;
+                    if(parent.CuePlaybackMode != CuePlaybackMode.Serial)
                     parent.Playing = false;
                 }
             }

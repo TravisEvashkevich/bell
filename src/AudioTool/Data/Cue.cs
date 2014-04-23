@@ -196,6 +196,11 @@ namespace AudioTool.Data
 
         private void PlaySerial()
         {
+            if (_playingIndex >= Children.Count)
+            {
+                _playingIndex = 0;
+            }
+
             if (Playing && _playingIndex < Children.Count)
             {
                 var sound = Children[_playingIndex] as Sound;
@@ -206,11 +211,7 @@ namespace AudioTool.Data
                 _timer.Interval = duration.TotalMilliseconds;
                 _timer.Start();
             }
-            else
-            {
-                _timer.Stop();
-                Playing = false;
-            }
+
         }
 
         private void PlayCycle()
@@ -253,8 +254,6 @@ namespace AudioTool.Data
         public void Play()
         {
             Playing = true;
-            //This should be handeled within each playback method instead of out here (cause it causes things like Cycle to die)
-            /*_playingIndex = 0;*/
 
             switch (_playbackInUse)
             {
@@ -271,6 +270,7 @@ namespace AudioTool.Data
                     PlayRandom();
                     break;
                 case CuePlaybackMode.Serial:
+                    _playingIndex = 0;
                     PlaySerial();
                     break;
             }
@@ -484,17 +484,13 @@ namespace AudioTool.Data
             Name = "New Cue";
             Children = new ObservableCollection<INode>();
             _timer = new Timer();
-            //_timer.Elapsed += _timer_Elapsed;
+            _timer.Elapsed += _timer_Elapsed;
         }
 
         void _timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             if (_playbackInUse == CuePlaybackMode.Serial)
                 PlaySerial();
-            else if (_playbackInUse == CuePlaybackMode.Cycle)
-                PlayCycle();
-            else if (_playbackInUse == CuePlaybackMode.RandomCycle)
-                PlayRandomCycle();
         }
 
         [JsonConstructor]
