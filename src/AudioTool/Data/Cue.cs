@@ -223,49 +223,36 @@ namespace AudioTool.Data
             if (Playing && _playingIndex < Children.Count)
             {
                 var sound = Children[_playingIndex] as Sound;
-                var duration = sound.SoundEffect.Duration;
                 sound.Play();
                 _playingIndex++;
-                _timer.Stop();
-                _timer.Interval = duration.TotalMilliseconds;
-                _timer.Start();
-            }
-
-
-            
+            }           
         }
 
         [JsonIgnore]
-        private List<INode> _soundsListToUse = new List<INode>(); 
+        private List<INode> _soundsList1 = new List<INode>(); 
 
         private void PlayRandomCycle()
         {
-            if (Playing && _soundsListToUse.Count > 0)
+            //check to see if the list is empty before we go to play.
+            if (_soundsList1.Count <= 0)
             {
-                var count = _soundsListToUse.Count;
-
-                var random = new Random((int)DateTime.Now.Ticks);
-                var index = random.Next(count);
-
-                var sound = _soundsListToUse[index] as Sound;
-                var duration = sound.SoundEffect.Duration;
-                sound.Play();
-                _soundsListToUse.Remove(sound);
-                _timer.Stop();
-                _timer.Interval = duration.TotalMilliseconds;
-                _timer.Start();
+                _soundsList1 = new List<INode>(Children);
             }
-            else
+
+            if (Playing && _soundsList1.Count >0)
             {
-                _soundsListToUse = new List<INode>(Children);
-                PlayRandomCycle();
+                var random = new Random();
+                var index = random.Next(_soundsList1.Count);
+                var sound = _soundsList1[index] as Sound;
+                sound.Play();
+                //Remove sound from list.
+                _soundsList1.Remove(sound);
             }
         }
 
         public void Play()
         {
             Playing = true;
-            _soundsListToUse = new List<INode>(Children);
             //This should be handeled within each playback method instead of out here (cause it causes things like Cycle to die)
             /*_playingIndex = 0;*/
 
@@ -497,7 +484,7 @@ namespace AudioTool.Data
             Name = "New Cue";
             Children = new ObservableCollection<INode>();
             _timer = new Timer();
-            _timer.Elapsed += _timer_Elapsed;
+            //_timer.Elapsed += _timer_Elapsed;
         }
 
         void _timer_Elapsed(object sender, ElapsedEventArgs e)
