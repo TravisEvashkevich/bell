@@ -208,6 +208,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Content\arcade-outside-buildings.png" />
     <Content Include="Content\pause.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

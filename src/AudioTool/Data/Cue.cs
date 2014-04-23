@@ -43,6 +43,13 @@ namespace AudioTool.Data
             }
         }
 
+        #region Radius
+
+        private float _radius;
+
+        public float Radius { get { return _radius; } set { Set(ref _radius, value); } }
+        #endregion
+
         #region Pitch
 
         private float _pitch;
@@ -485,6 +492,7 @@ namespace AudioTool.Data
             Children = new ObservableCollection<INode>();
             _timer = new Timer();
             _timer.Elapsed += _timer_Elapsed;
+            _radius = 4;
         }
 
         void _timer_Elapsed(object sender, ElapsedEventArgs e)
