@@ -295,15 +295,33 @@ namespace AudioTool.Data
                 PlayingInstance.Play();
             else
             {
+                if (Parent != null)
+                {
+                    var parent = Parent as Cue;
+                    if (parent.CuePlaybackMode == CuePlaybackMode.Serial)
+                    {
+                        PlayingInstance.Stop();
+                        AudioManager.RemoveSoundInstance(PlayingInstance);
+                        PlayingInstance.Dispose();
+                        PlayingInstance = SoundEffect.CreateInstance();
+                        InitializeInstance(PlayingInstance);
+                        AudioManager.AddSoundInstance(PlayingInstance);
+                        PlayingInstance.IsLooped = false;
+                        PlayingInstance.Play();
+                    }
+                    else
+                    {
+                        PlayingInstance.Stop();
+                        AudioManager.RemoveSoundInstance(PlayingInstance);
+                        PlayingInstance.Dispose();
+                        PlayingInstance = SoundEffect.CreateInstance();
+                        InitializeInstance(PlayingInstance);
+                        AudioManager.AddSoundInstance(PlayingInstance);
+                        PlayingInstance.IsLooped = Looped;
+                        PlayingInstance.Play();
+                    }
+                }
                 
-                PlayingInstance.Stop();
-                AudioManager.RemoveSoundInstance(PlayingInstance);
-                PlayingInstance.Dispose();
-                PlayingInstance = SoundEffect.CreateInstance();
-                InitializeInstance(PlayingInstance);
-                AudioManager.AddSoundInstance(PlayingInstance);
-                PlayingInstance.IsLooped = Looped;
-                PlayingInstance.Play();
             }
         }
 
@@ -465,6 +483,7 @@ namespace AudioTool.Data
         }
 
         #region ReimportCommand
+        [JsonIgnore]
         public SmartCommand<object> ReImportCommand { get; private set; }
 
         public void ExecuteReImport(object obj)

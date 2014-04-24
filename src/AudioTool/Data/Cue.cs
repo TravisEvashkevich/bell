@@ -556,9 +556,9 @@ namespace AudioTool.Data
         }
 
         #region ReimportAll Command
-
+        [JsonIgnore]
         public SmartCommand<object> ReimportAllCommand { get; private set; }
-
+        
         public void ExecuteReimportAllCommand(object obj)
         {
             foreach (Sound child in Children)
