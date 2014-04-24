@@ -1,39 +1,64 @@
 ﻿<UserControl x:Class="AudioTool.Views.CueView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" MinHeight="300" MinWidth="300" >
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" MinHeight="300" MinWidth="300" MaxWidth="600" >
     <UserControl.DataContext>
         <Binding Path="CueView" Source="{StaticResource Locator}"/>
     </UserControl.DataContext>
     <StackPanel>
         <Grid>
-            <Label Content="Cue Name: " HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-            <TextBox Height="23" Margin="93,13,10,0" TextWrapping="Wrap" Text="{Binding Cue.Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" VerticalAlignment="Top"/>
-            <Slider HorizontalAlignment="Left" Margin="93,102,0,0" VerticalAlignment="Top" Width="197" Maximum="1" Minimum="-1" SmallChange="0.01" LargeChange="0.1" Value="{Binding Cue.Pan, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-            <Label Content="Cue Name: " HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-            <Label Content="Volume: " HorizontalAlignment="Left" Margin="10,51,0,0" VerticalAlignment="Top"/>
-            <Label Content="Pan: " HorizontalAlignment="Left" Margin="10,94,0,0" VerticalAlignment="Top"/>
-            <Label Content="Pitch: " HorizontalAlignment="Left" Margin="10,143,0,0" VerticalAlignment="Top"/>
-            <Slider Value="{Binding Cue.Pitch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="93,151,0,0" VerticalAlignment="Top" Width="197" Maximum="1" SmallChange="0.01" LargeChange="0.1"/>
-            <Slider Value="{Binding Cue.Volume, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="93,59,0,0" VerticalAlignment="Top" Width="197" Maximum="1" SmallChange="0.01" LargeChange="0.1"/>
-            <TextBox Text="{Binding Cue.Volume, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="295,54,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="103"/>
-            <TextBox Text="{Binding Cue.Pan, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="295,97,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="103"/>
-            <TextBox Text="{Binding Cue.Pitch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Height="23" Margin="295,146,0,0" TextWrapping="Wrap"  VerticalAlignment="Top" Width="103"/>
-            <Button Content="Play" Command="{Binding Cue.PlayCommand}" HorizontalAlignment="Left" Margin="323,270,0,0" VerticalAlignment="Top" Width="75"/>
-            <Label Content="Instances: " HorizontalAlignment="Left" Margin="10,186,0,0" VerticalAlignment="Top"/>
-            <TextBox HorizontalAlignment="Left" Height="23" Margin="93,189,0,0" TextWrapping="Wrap" Text="{Binding Cue.Instances}" VerticalAlignment="Top" Width="120"/>
-            <ComboBox HorizontalAlignment="Left" Margin="10,268,0,0" VerticalAlignment="Top" Width="228" ItemsSource="{Binding CueModes}" SelectedItem="{Binding Cue.CuePlaybackMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-            <TextBlock HorizontalAlignment="Left" Margin="10,247,0,0" TextWrapping="Wrap" Text="Playback Mode:" VerticalAlignment="Top"/>
-            <Button Content="Stop" Command="{Binding Cue.StopCommand}" HorizontalAlignment="Left" Margin="243,270,0,0" VerticalAlignment="Top" Width="75"/>
+            <StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
+                    <Label Content="Cue Name: " HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                    <TextBox Height="25" Width="200" Margin="0,10,0,10" TextWrapping="Wrap" Text="{Binding Cue.Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" VerticalAlignment="Top"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="10,10,0,0">
+                    <Label Content="Volume:      " HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <Slider Value="{Binding Cue.Volume, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Maximum="1" SmallChange="0.01" LargeChange="0.1"/>
+                    <TextBox Text="{Binding Cue.Volume, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,0,0" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="103"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="10,10,0,0">
+                    <Label Content="Pan:            " HorizontalAlignment="Left"  VerticalAlignment="Top"/>
+                    <Slider HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Maximum="1" Minimum="-1" SmallChange="0.01" LargeChange="0.1" Value="{Binding Cue.Pan, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox Text="{Binding Cue.Pan, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,0,0" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap"  VerticalAlignment="Top" Width="103"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="10,10,0,0">
+                    <Label Content="Pitch:          " HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <Slider Value="{Binding Cue.Pitch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Maximum="1" SmallChange="0.01" LargeChange="0.1"/>
+                    <TextBox Text="{Binding Cue.Pitch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,0,0" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap"  VerticalAlignment="Top" Width="103"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="10,10,0,0">
+                    <Label Content="Radius:       " HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <Slider x:Name="RadiusSlider" Value="{Binding Cue.Radius, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Maximum="1000" SmallChange="1" LargeChange="2"/>
+                    <TextBox Text="{Binding Cue.Radius, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,0,0" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap"  VerticalAlignment="Top" Width="103"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="10,10,0,0">
+                    <Label Content="Instances: " HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <TextBox HorizontalAlignment="Left" Height="25" Margin="10,0,0,0" TextWrapping="Wrap" Text="{Binding Cue.Instances}" VerticalAlignment="Top" Width="50"/>
+                    <Label Content="Circle Center X/Y" Margin="20,0,0,0"/>
+                    <TextBox x:Name="CenterXTextBox"  TextChanged="CenterTextBox_OnTextChanged" Width="50" Margin="10,0,0,0"/>
+                    <TextBox x:Name="CenterYTextBox"  TextChanged="CenterTextBox_OnTextChanged" Width="50" Margin="10,0,0,0"/>
+                </StackPanel>
+                <StackPanel Margin="10,10,0,0">
+                    <TextBlock HorizontalAlignment="Left" Margin="0,0,0,5" TextWrapping="Wrap" Text="Playback Mode:" VerticalAlignment="Top"/>
+                    <StackPanel Orientation="Horizontal">
+                        <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Width="228" ItemsSource="{Binding CueModes}" SelectedItem="{Binding Cue.CuePlaybackMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Button Content="Play" Command="{Binding Cue.PlayCommand}" HorizontalAlignment="Left" Margin="5,0,5,0" VerticalAlignment="Top" Width="75"/>
+                        <Button Content="Stop" Command="{Binding Cue.StopCommand}" HorizontalAlignment="Left" Margin="5,0,5,0" VerticalAlignment="Top" Width="75"/> 
+                    </StackPanel>
+
+                </StackPanel>
+            </StackPanel>
         </Grid>
-        <Grid Margin="0,10,0,0">
-            <Canvas>
-                <Image Source="../Content/arcade-outside-buildings.png"></Image>
+        <Grid Margin="10,10,0,0" >
+            <Canvas x:Name="TheCanvas">
+                <!--Doubled the size for easier viewing-->
+                <Image Source="../Content/arcade-outside-buildings.png"/>
                 <Ellipse
-                  Canvas.Top="50"
-                  Canvas.Left="50"
+                  Canvas.Top="{Binding Cue.CenterPoint.Y}"
+                  Canvas.Left="{Binding Cue.CenterPoint.X}"
                   Fill="#FF0000FF"
-                  Height="{Binding Cue.Radius}"
-                  Width="{Binding Cue.Radius}"
+                  Height="{Binding Cue.Radius, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                  Width="{Binding Cue.Radius, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                   StrokeThickness="1"
                   Stroke="#FFFFFF00"/>
             </Canvas>

@@ -44,11 +44,41 @@ namespace AudioTool.Data
         }
 
         #region Radius
-
         private float _radius;
 
-        public float Radius { get { return _radius; } set { Set(ref _radius, value); } }
+        public float Radius { get { return _radius; } set
+        {
+            CenterPoint = new Point(_definedCenter.X - (value / 2), _definedCenter.Y - (value/2));
+            Set(ref _radius, value); } 
+        }
         #endregion
+
+        #region center
+
+        //This is the center that the circle uses
+        private Point _centerPoint;
+        [JsonIgnore]
+        public Point CenterPoint
+        {
+            get { return _centerPoint; }
+            set { Set(ref _centerPoint, value); }
+        }
+
+        //This is the values we get from the textboxes and help to make sure the circle stays centered by 
+        //adjusting the CenterPoint var.
+        private Point _definedCenter;
+        [JsonIgnore]
+        public Point DefinedCenter
+        {
+            get { return _definedCenter; }
+            set
+            {
+                CenterPoint = new Point(value.X - (Radius / 2), value.Y - (Radius / 2));
+                Set(ref _definedCenter, value);
+            }
+        }
+
+        #endregion  
 
         #region Pitch
 
@@ -200,7 +230,6 @@ namespace AudioTool.Data
 
         #endregion
 
-
         private void PlaySerial()
         {
             if (_playingIndex >= Children.Count)
@@ -237,7 +266,7 @@ namespace AudioTool.Data
         }
 
         [JsonIgnore]
-        private List<INode> _soundsList1 = new List<INode>(); 
+        private List<INode> _soundsList1 = new List<INode>();
 
         private void PlayRandomCycle()
         {
@@ -492,7 +521,12 @@ namespace AudioTool.Data
             Children = new ObservableCollection<INode>();
             _timer = new Timer();
             _timer.Elapsed += _timer_Elapsed;
+            _definedCenter.X = 200;
+            _definedCenter.Y = 100;
+
             _radius = 4;
+            _centerPoint.X = _definedCenter.X - (_radius / 2);
+            _centerPoint.Y = _definedCenter.Y - (_radius / 2);
         }
 
         void _timer_Elapsed(object sender, ElapsedEventArgs e)
@@ -523,5 +557,6 @@ namespace AudioTool.Data
             AddSoundCommand = new SmartCommand<object>(ExecuteAddSoundCommand, CanExecuteAddSoundCommand);  
             base.InitializeCommands();
         }
+
     }
 }
