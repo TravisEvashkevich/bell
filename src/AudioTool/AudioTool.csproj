@@ -214,7 +214,7 @@
     <Content Include="Content\play.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Content\rivercity-floor2.png" />
+    <Resource Include="Content\GreenScreen.png" />
     <Content Include="Content\stop.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
