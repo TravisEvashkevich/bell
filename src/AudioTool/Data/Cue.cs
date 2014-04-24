@@ -324,12 +324,13 @@ namespace AudioTool.Data
 
         public void Stop()
         {
-            Playing = false;
+            
             _timer.Stop();
             foreach (Sound sound in Children)
             {
                 sound.Stop();
             }
+            Playing = false;
         }
 
         #region PlayParallelCommand

@@ -309,7 +309,7 @@ namespace AudioTool.Data
 
         public void Stop()
         {
-            PlayingInstance.Stop();
+            PlayingInstance.Stop(true);
         }
 
         public void Pause()
