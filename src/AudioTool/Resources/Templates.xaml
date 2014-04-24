@@ -129,7 +129,7 @@
                     <MenuItem Visibility="{Binding Children.Count, Converter={StaticResource CueChildrenCountToVisibility}}" Header="Play random cycle" Command="{Binding PlayRandomCycleCommand}"></MenuItem>
                     <MenuItem Header="Stop" Command="{Binding StopCommand}"></MenuItem>
                     <MenuItem Header="ReImport">
-                        <MenuItem Header="ReImport All" Command="{Binding }"/>
+                        <MenuItem Header="ReImport All" Command="{Binding ReimportAllCommand}"/>
                     </MenuItem>
                     <MenuItem Header="Remove" Command="{Binding RemoveCommand}"></MenuItem>
                 </ContextMenu>
@@ -168,6 +168,7 @@
                     <MenuItem Header="Pause" Command="{Binding PauseCommand}"></MenuItem>
                     <MenuItem Header="Stop" Command="{Binding StopCommand}"></MenuItem>
                     <MenuItem Header="Remove" Command="{Binding RemoveCommand}"></MenuItem>
+                    <MenuItem Header="ReImport Selected" Command="{Binding ReImportCommand}"/>
                 </ContextMenu>
             </Border.ContextMenu>
         </Border>

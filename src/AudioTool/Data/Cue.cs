@@ -544,6 +544,20 @@ namespace AudioTool.Data
             }
         }
 
+        #region ReimportAll Command
+
+        public SmartCommand<object> ReimportAllCommand { get; private set; }
+
+        public void ExecuteReimportAllCommand(object obj)
+        {
+            foreach (Sound child in Children)
+            {
+                child.ExecuteReImport(child);
+            }
+        }
+        #endregion
+
+
         protected override void InitializeCommands()
         {
             PlayCommand = new SmartCommand<object>(ExecutePlayCommand, CanExecutePlayCommand);  
@@ -555,6 +569,7 @@ namespace AudioTool.Data
 
             StopCommand = new SmartCommand<object>(ExecuteStopCommand, CanExecuteStopCommand);
             AddSoundCommand = new SmartCommand<object>(ExecuteAddSoundCommand, CanExecuteAddSoundCommand);  
+            ReimportAllCommand = new SmartCommand<object>(ExecuteReimportAllCommand);
             base.InitializeCommands();
         }
 

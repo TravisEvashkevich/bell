@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using AudioTool.Core;
+using Microsoft.Win32;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Newtonsoft.Json;
@@ -469,48 +470,109 @@ namespace AudioTool.Data
         public void ExecuteReImport(object obj)
         {
             
-            if (obj is string)
+            //ALWAYS stop the sound before you reimport as it will completely screw up the cue if you don't
+            Stop();
+            //quick check to see if the file even exists
+            if (!File.Exists(FilePath))
             {
-                var path = obj as string;
-                //Does a reimport with the specified path
-                var soundfile = new FileStream(path, FileMode.Open);
-                SoundEffect = SoundEffect.FromStream(soundfile);
-                soundfile.Close();
-                soundfile.Dispose();
-                soundfile = new FileStream(path, FileMode.Open);
-                Data = Helper.ReadFully(soundfile);
-                soundfile.Close();
-                soundfile.Dispose();
-                FilePath = path;
-                //Save the last modified time so that way we can use a "ReImport All" or "ReImport Selected"
-                //command to just check the date times. If the last write time was older than the current, reimport and overwrite
-                FileLastModified = File.GetLastWriteTime(path).ToUniversalTime();
+                //Search says it doesn't exist, inform the user to FIND the file
+                if (MessageBox.Show("The file doesn't exist at the old path, would you like to find the file?",
+                    "Missing File.", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                {
+                    //The thing is, the filename could have technically changed or have a different syntax or something
+                    var dialog = new OpenFileDialog();
 
-                //Name = Path.GetFileNameWithoutExtension(FilePath);
-                PlayingInstance = SoundEffect.CreateInstance();
-                AudioManager.AddSoundInstance(PlayingInstance);
+                    bool? result = dialog.ShowDialog();
+                    if (result == true)
+                    {
+                        //we'll check the filename they selected against the filename in the sound and ask if they want to overwrite
+                        //if they are different
+                        //get the path
+                        string fileName = Path.GetFileNameWithoutExtension(dialog.FileName);
+
+                        if (fileName != Name)
+                        {
+                            if (MessageBox.Show(
+                                "The selected file has a different name than what you are trying to overwrite. Would you like to proceed anyway?",
+                                "FileName doesn't match", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                            {
+                                //pass the filename from the dialog to the Reimport new version so it will Create and overwrite
+                                //the sound thus updating in the program.
+                                ReimportSoundFile(dialog.FileName);
+                            }
+                        }
+                        else
+                        {
+                            ReimportSoundFile(dialog.FileName);
+                        }
+                    }
+                }
             }
             else
             {
+                //the file exists at the path, so we get the modified time to see if it's newer or not
+                var date = File.GetLastWriteTime(FilePath).ToUniversalTime();
 
-                //Does a reimport with the same file path as what the old file was.
-                var soundfile = new FileStream(FilePath, FileMode.Open);
-                SoundEffect = SoundEffect.FromStream(soundfile);
-                soundfile.Close();
-                soundfile.Dispose();
-                soundfile = new FileStream(FilePath, FileMode.Open);
-                Data = Helper.ReadFully(soundfile);
-                soundfile.Close();
-                soundfile.Dispose();
-                FilePath = FilePath;
-                //Save the last modified time so that way we can use a "ReImport All" or "ReImport Selected"
-                //command to just check the date times. If the last write time was older than the current, reimport and overwrite
-                FileLastModified = File.GetLastWriteTime(FilePath).ToUniversalTime();
-
-                //Name = Path.GetFileNameWithoutExtension(FilePath);
-                PlayingInstance = SoundEffect.CreateInstance();
-                AudioManager.AddSoundInstance(PlayingInstance);
+                if (date > FileLastModified)
+                {
+                    ReimportSoundFile();
+                    MessageBox.Show(String.Format("{0} was reimported successfully!",Name),"Success!");
+                }
+                else if (date <= FileLastModified)
+                {
+                    //we inform the user that the file is not newer than the version they are using and ask if they want to reimport anyways
+                    if (MessageBox.Show(
+                        String.Format("The version of: \n {0} \n Is older than the current version. Continue Reimport?",Path.GetFileNameWithoutExtension(FilePath)),
+                        "Warning", MessageBoxButton.YesNoCancel) == MessageBoxResult.Yes)
+                    {
+                        ReimportSoundFile();
+                        MessageBox.Show(String.Format("{0} was reimported successfully!", Path.GetFileNameWithoutExtension(FilePath)), "Success!");
+                    }
+                }
             }
+            
+        }
+
+        private void ReimportSoundFile()
+        {
+            //Does a reimport with the same file path as what the old file was.
+            var soundfile = new FileStream(FilePath, FileMode.Open);
+            SoundEffect = SoundEffect.FromStream(soundfile);
+            soundfile.Close();
+            soundfile.Dispose();
+            soundfile = new FileStream(FilePath, FileMode.Open);
+            Data = Helper.ReadFully(soundfile);
+            soundfile.Close();
+            soundfile.Dispose();
+            FilePath = FilePath;
+            //Save the last modified time so that way we can use a "ReImport All" or "ReImport Selected"
+            //command to just check the date times. If the last write time was older than the current, reimport and overwrite
+            FileLastModified = File.GetLastWriteTime(FilePath).ToUniversalTime();
+
+            //Name = Path.GetFileNameWithoutExtension(FilePath);
+            PlayingInstance = SoundEffect.CreateInstance();
+            AudioManager.AddSoundInstance(PlayingInstance);
+        }
+
+        private void ReimportSoundFile(string path)
+        {
+            //Does a reimport with the specified path
+            var soundfile = new FileStream(path, FileMode.Open);
+            SoundEffect = SoundEffect.FromStream(soundfile);
+            soundfile.Close();
+            soundfile.Dispose();
+            soundfile = new FileStream(path, FileMode.Open);
+            Data = Helper.ReadFully(soundfile);
+            soundfile.Close();
+            soundfile.Dispose();
+            FilePath = path;
+            //Save the last modified time so that way we can use a "ReImport All" or "ReImport Selected"
+            //command to just check the date times. If the last write time was older than the current, reimport and overwrite
+            FileLastModified = File.GetLastWriteTime(path).ToUniversalTime();
+
+            //Name = Path.GetFileNameWithoutExtension(FilePath);
+            PlayingInstance = SoundEffect.CreateInstance();
+            AudioManager.AddSoundInstance(PlayingInstance);
         }
         #endregion
 

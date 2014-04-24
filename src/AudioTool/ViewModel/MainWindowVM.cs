@@ -349,65 +349,7 @@ namespace AudioTool.ViewModel
             if (_currentSelectedNode is Sound)
             {
                 var sound = _currentSelectedNode as Sound;
-                //ALWAYS stop the sound before you reimport as it will completely screw up the cue if you don't
-                sound.Stop();
-                //quick check to see if the file even exists
-                if (!File.Exists(sound.FilePath))
-                {
-                    //Search says it doesn't exist, inform the user to FIND the file
-                    if (MessageBox.Show("The file doesn't exist at the old path, would you like to find the file?",
-                        "Missing File.", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                    {
-                        //The thing is, the filename could have technically changed or have a different syntax or something
-                        var dialog = new OpenFileDialog();
-
-                        bool? result = dialog.ShowDialog();
-                        if (result == true)
-                        {
-                            //we'll check the filename they selected against the filename in the sound and ask if they want to overwrite
-                            //if they are different
-                            //get the path
-                            string fileName = Path.GetFileNameWithoutExtension(dialog.FileName);
-
-                            if (fileName != sound.Name)
-                            {
-                                if (MessageBox.Show(
-                                    "The selected file has a different name than what you are trying to overwrite. Would you like to proceed anyway?",
-                                    "FileName doesn't match", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                                {
-                                    //pass the filename from the dialog to the Reimport new version so it will Create and overwrite
-                                    //the sound thus updating in the program.
-                                    sound.ExecuteReImport(dialog.FileName);
-                                }
-                            }
-                            else
-                            {
-                                sound.ExecuteReImport(dialog.FileName);
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    //the file exists at the path, so we get the modified time to see if it's newer or not
-                    var date = File.GetLastWriteTime(sound.FilePath).ToUniversalTime();
-
-                    if (date > sound.FileLastModified)
-                    {
-                        sound.ExecuteReImport(sound);
-                        MessageBox.Show("Sound successfully Reimported!");
-                    }
-                    else if (date <= sound.FileLastModified)
-                    {
-                        //we inform the user that the file is not newer than the version they are using and ask if they want to reimport anyways
-                        if (MessageBox.Show(
-                            "The file that would be imported is older than the current. Are you sure you want to import over your current file?",
-                            "Warning", MessageBoxButton.YesNoCancel) == MessageBoxResult.Yes)
-                        {
-                            sound.ExecuteReImport(sound);
-                        }
-                    }
-                }
+                sound.ExecuteReImport(null);
             }
         }
 
