@@ -224,6 +224,16 @@ namespace AudioTool.Data
             get { return _playing; }
             set
             {
+                //for things like Parallel play, longer sounds can still be playing
+                //even though the short ones have set the bool to false so we do a check
+                foreach (Sound child in Children)
+                {
+                    if (child.PlayingInstance.State == SoundState.Playing)
+                    {
+                        Set(ref _playing, true);
+                        return;
+                    }
+                }
                 Set(ref _playing, value);
             }
         }
