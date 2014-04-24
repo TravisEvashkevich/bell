@@ -52,7 +52,7 @@
         <Grid Margin="10,10,0,0" >
             <Canvas x:Name="TheCanvas">
                 <!--Doubled the size for easier viewing-->
-                <Image Source="../Content/arcade-outside-buildings.png"/>
+                <Image Source="../Content/rivercity-floor2.png"/>
                 <Ellipse
                   Canvas.Top="{Binding Cue.CenterPoint.Y}"
                   Canvas.Left="{Binding Cue.CenterPoint.X}"
