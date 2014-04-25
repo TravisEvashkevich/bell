@@ -268,7 +268,7 @@ namespace AudioTool.Data
                 }
                 else
                 {
-                    //We'll do a quick check to make sure that not all the sounds are muted in serial
+                    //We'll do a check to make sure that not all the sounds are muted in serial
                     //so we don't get an infinite loop
                     bool allMuted = true;
                     foreach (Sound child in Children)
@@ -304,6 +304,27 @@ namespace AudioTool.Data
             if (Playing && _playingIndex < Children.Count)
             {
                 var sound = Children[_playingIndex] as Sound;
+                if (sound.IsMuted)
+                {
+                    //We'll do a check to make sure that not all the sounds are muted in serial
+                    //so we don't get an infinite loop
+                    bool allMuted = true;
+                    foreach (Sound child in Children)
+                    {
+                        if (!child.IsMuted)
+                        {
+                            allMuted = false;
+                        }
+                    }
+                    if (allMuted == false)
+                    {
+                        ++_playingIndex;
+                        PlaySerial();
+                        return;
+                    }
+                    MessageBox.Show("All sounds are Muted");
+                    Stop();
+                }
                 sound.Play();
                 _playingIndex++;
             }           
