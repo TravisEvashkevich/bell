@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Timers;
 using System.Windows;
 using AudioTool.Core;
@@ -231,6 +232,10 @@ namespace AudioTool.Data
 
         private void PlayRandom()
         {
+            if (CheckIfAllSoundsMuted(Children.ToList()))
+            {
+                return;
+            }
             var count = Children.Count;
 
             var random = new Random((int)DateTime.Now.Ticks);
@@ -296,6 +301,12 @@ namespace AudioTool.Data
 
         private void PlayCycle()
         {
+
+            if (CheckIfAllSoundsMuted(Children.ToList()))
+            {
+                Stop();
+                return;
+            }
             //Check for index count BEFORE playing the cycle so that way we don't have to do a full extra click before playing
             //and also doesn't do the recursive call it prev did which made it loop constantly
             if (_playingIndex >= Children.Count)
@@ -306,24 +317,9 @@ namespace AudioTool.Data
                 var sound = Children[_playingIndex] as Sound;
                 if (sound.IsMuted)
                 {
-                    //We'll do a check to make sure that not all the sounds are muted in serial
-                    //so we don't get an infinite loop
-                    bool allMuted = true;
-                    foreach (Sound child in Children)
-                    {
-                        if (!child.IsMuted)
-                        {
-                            allMuted = false;
-                        }
-                    }
-                    if (allMuted == false)
-                    {
-                        ++_playingIndex;
-                        PlaySerial();
-                        return;
-                    }
-                    MessageBox.Show("All sounds are Muted");
-                    Stop();
+                    ++_playingIndex;
+                    PlayCycle();
+                    return;
                 }
                 sound.Play();
                 _playingIndex++;
@@ -335,8 +331,19 @@ namespace AudioTool.Data
 
         private void PlayRandomCycle()
         {
+            if (CheckIfAllSoundsMuted(Children.ToList()))
+            {
+                Stop();
+                return;
+            }
             //check to see if the list is empty before we go to play.
             if (_soundsList1.Count <= 0)
+            {
+                _soundsList1 = new List<INode>(Children);
+            }
+
+            //Check to see if all sounds are muted before even going into the playing
+            if (CheckIfAllSoundsMuted(_soundsList1) && _soundsList1.Count < Children.Count)
             {
                 _soundsList1 = new List<INode>(Children);
             }
@@ -384,6 +391,27 @@ namespace AudioTool.Data
                     PlaySerial();
                     break; 
             }
+        }
+
+        public bool CheckIfAllSoundsMuted(List<INode> toCheckList )
+        {
+            //We'll do a check to make sure that not all the sounds are muted in serial
+            //so we don't get an infinite loop
+            bool allMuted = true;
+            foreach (Sound child in toCheckList)
+            {
+                if (!child.IsMuted)
+                {
+                    allMuted = false;
+                    break;
+                }
+            }
+            if (allMuted == false)
+            {
+                return false;
+            }
+            //Stop();
+            return true;
         }
 
         public void Stop()
