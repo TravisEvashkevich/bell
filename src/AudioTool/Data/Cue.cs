@@ -446,6 +446,48 @@ namespace AudioTool.Data
             return false;
         }
 
+        public void DecreaseSoundIndex(Sound sound)
+        {
+            var index = -1;
+            index =Children.IndexOf(sound);
+
+            if (index == -1)
+                return;
+            
+            if (index >0)
+            {
+                Children.RemoveAt(index);
+                Children.Insert(index-1,sound);
+                
+            }
+            else if (index == 0)
+            {
+                Children.RemoveAt(index);
+                Children.Insert(Children.Count,sound);
+            }
+        }
+
+        public void IncreaseSoundIndex(Sound sound)
+        {
+            var index = -1;
+            index = Children.IndexOf(sound);
+
+            if (index == -1)
+                return;
+
+            if (index == Children.Count)
+            {
+                Children.RemoveAt(index);
+                Children.Insert(index + 1, sound);
+
+            }
+            else if(index >= 0)
+            {
+                Children.RemoveAt(index);
+                Children.Insert(0, sound);
+            }
+        }
+
         #region PlayParallelCommand
         [JsonIgnore]
         public SmartCommand<object> PlayParallelCommand { get; private set; }

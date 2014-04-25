@@ -194,12 +194,14 @@ namespace AudioTool.Data
 
         #endregion
 
+        #region ParentIsPlaying
         private bool _parentIsPlaying ;
 
         public bool ParentIsPlaying
         {
             get { return _parentIsPlaying; } set { Set(ref _parentIsPlaying, value); }
         }
+        #endregion
 
         public Sound()
         {
@@ -220,8 +222,7 @@ namespace AudioTool.Data
             }
         }
 
-        public Sound(string path)
-            : this()
+        public Sound(string path): this()
         {
             var soundfile = new FileStream(path, FileMode.Open);
             SoundEffect = SoundEffect.FromStream(soundfile);
@@ -337,8 +338,6 @@ namespace AudioTool.Data
                 
             }
         }
-
-
 
         public void Stop()
         {
@@ -611,6 +610,26 @@ namespace AudioTool.Data
         }
         #endregion
 
+        #region MoveUpInCueCommand
+
+        public SmartCommand<object> MoveUpInCueCommand { get; private set; }
+
+        public void ExecuteMoveUpInCue(object o)
+        {
+            (Parent as Cue).DecreaseSoundIndex(this);
+        }
+        #endregion
+
+        #region MoveDownInCueCommand
+
+        public SmartCommand<object> MoveDownInCueCommand { get; private set; }
+
+        public void ExecuteMoveDownInCue(object o)
+        {
+            (Parent as Cue).IncreaseSoundIndex(this);
+        }
+        #endregion
+
         protected override void InitializeCommands()
         {
             ClearPanCommand = new SmartCommand<object>(ExecuteClearPanCommand, CanExecuteClearPanCommand);
@@ -622,6 +641,8 @@ namespace AudioTool.Data
             PauseCommand = new SmartCommand<object>(ExecutePauseCommand, CanExecutePauseCommand);
             ReImportCommand = new SmartCommand<object>(ExecuteReImport);
 
+            MoveUpInCueCommand = new SmartCommand<object>(ExecuteMoveUpInCue);
+            MoveDownInCueCommand = new SmartCommand<object>(ExecuteMoveDownInCue);
             base.InitializeCommands();
         }
     }
