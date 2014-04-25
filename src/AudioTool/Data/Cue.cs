@@ -222,6 +222,7 @@ namespace AudioTool.Data
 
         #endregion
 
+        #region Play Options
         private void PlayParallel()
         {
             foreach (Sound sound in Children)
@@ -392,6 +393,7 @@ namespace AudioTool.Data
                     break; 
             }
         }
+        #endregion
 
         public bool CheckIfAllSoundsMuted(List<INode> toCheckList )
         {
@@ -425,6 +427,17 @@ namespace AudioTool.Data
             Playing = false;
         }
 
+        private bool IsAnySoundPlay()
+        {
+            foreach (Sound sound in Children)
+            {
+                if (sound.PlayingInstance != null && sound.PlayingInstance.State == SoundState.Playing)
+                    return true;
+            }
+
+            return false;
+        }
+
         #region PlayParallelCommand
         [JsonIgnore]
         public SmartCommand<object> PlayParallelCommand { get; private set; }
@@ -444,17 +457,6 @@ namespace AudioTool.Data
         }
 
         #endregion
-
-        private bool IsAnySoundPlay()
-        {
-            foreach (Sound sound in Children)
-            {
-                if (sound.PlayingInstance != null && sound.PlayingInstance.State == SoundState.Playing)
-                    return true;
-            }
-
-            return false;
-        }
 
         #region PlaySerialCommand
         [JsonIgnore]
@@ -618,6 +620,50 @@ namespace AudioTool.Data
 
         #endregion
 
+        #region ReimportAll Command
+        [JsonIgnore]
+        public SmartCommand<object> ReimportAllCommand { get; private set; }
+
+        public void ExecuteReimportAllCommand(object obj)
+        {
+            foreach (Sound child in Children)
+            {
+                child.ExecuteReImport(child);
+            }
+        }
+        #endregion
+
+        #region MuteAllCommand
+
+        public SmartCommand<object> MuteAllCommand { get; private set; }
+
+        public bool CanExecuteMuteAll(object o)
+        {
+            return !Playing;
+        }
+
+        public void ExecuteMuteAll(object obj)
+        {
+            foreach (Sound child in Children)
+            {
+                child.IsMuted = true;
+            }
+        }
+        #endregion
+
+        #region Un-MuteAllCommand
+
+        public SmartCommand<object> UnMuteAllCommand { get; private set; }
+
+        public void ExecuteUnMuteAll(object o)
+        {
+            foreach (Sound child in Children)
+            {
+                child.IsMuted = false;
+            }
+        }
+        #endregion
+
         public Cue()
         {
             Name = "New Cue";
@@ -647,20 +693,6 @@ namespace AudioTool.Data
             }
         }
 
-        #region ReimportAll Command
-        [JsonIgnore]
-        public SmartCommand<object> ReimportAllCommand { get; private set; }
-        
-        public void ExecuteReimportAllCommand(object obj)
-        {
-            foreach (Sound child in Children)
-            {
-                child.ExecuteReImport(child);
-            }
-        }
-        #endregion
-
-
         protected override void InitializeCommands()
         {
             PlayCommand = new SmartCommand<object>(ExecutePlayCommand, CanExecutePlayCommand);  
@@ -673,6 +705,9 @@ namespace AudioTool.Data
             StopCommand = new SmartCommand<object>(ExecuteStopCommand, CanExecuteStopCommand);
             AddSoundCommand = new SmartCommand<object>(ExecuteAddSoundCommand, CanExecuteAddSoundCommand);  
             ReimportAllCommand = new SmartCommand<object>(ExecuteReimportAllCommand);
+
+            MuteAllCommand = new SmartCommand<object>(ExecuteMuteAll, CanExecuteMuteAll);
+            UnMuteAllCommand = new SmartCommand<object>(ExecuteUnMuteAll);
             base.InitializeCommands();
         }
 

@@ -122,6 +122,10 @@
             <Border.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Add sound" Command="{Binding AddSoundCommand}"></MenuItem>
+                    <MenuItem Header="Mute Options">
+                        <MenuItem Header="Mute All Sounds" Command="{Binding MuteAllCommand}"/>
+                        <MenuItem Header="Un-Mute All Sounds" Command="{Binding UnMuteAllCommand}"/>
+                    </MenuItem>
                     <MenuItem Header="{Binding Children.Count, Converter={StaticResource CueChildrenCountToHeader}}" Command="{Binding PlayParallelCommand}"></MenuItem>
                     <MenuItem Visibility="{Binding Children.Count, Converter={StaticResource CueChildrenCountToVisibility}}" Header="Play serial" Command="{Binding PlaySerialCommand}"></MenuItem>
                     <MenuItem Visibility="{Binding Children.Count, Converter={StaticResource CueChildrenCountToVisibility}}" Header="Play random" Command="{Binding PlayRandomCommand}"></MenuItem>
