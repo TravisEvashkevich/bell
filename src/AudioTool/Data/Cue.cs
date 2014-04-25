@@ -193,6 +193,34 @@ namespace AudioTool.Data
 
         #endregion
 
+        #region Playing
+
+        private bool _playing;
+        [JsonIgnore]
+        public bool Playing
+        {
+            get { return _playing; }
+            set
+            {
+                //for things like Parallel play, longer sounds can still be playing
+                //even though the short ones have set the bool to false so we do a check
+                if (CuePlaybackMode == CuePlaybackMode.Parallel)
+                    foreach (Sound child in Children)
+                    {
+                        {
+                            if (child.PlayingInstance.State == SoundState.Playing)
+                            {
+                                Set(ref _playing, true);
+                                return;
+                            }
+                        }
+                    }
+                Set(ref _playing, value);
+            }
+        }
+
+        #endregion
+
         private void PlayParallel()
         {
             foreach (Sound sound in Children)
@@ -207,41 +235,17 @@ namespace AudioTool.Data
 
             var random = new Random((int)DateTime.Now.Ticks);
             var index = random.Next(count);
-
-            (Children[index] as Sound).Play();
+            if(!(Children[index] as Sound).IsMuted)
+                (Children[index] as Sound).Play();
+            else
+            {
+                PlayRandom();
+            }
         }
 
         private int _playingIndex = 0;
 
         private Timer _timer = new Timer();
-
-        #region Playing	
-
-        private bool _playing;
-        [JsonIgnore]
-        public bool Playing
-        {
-            get { return _playing; }
-            set
-            {
-                //for things like Parallel play, longer sounds can still be playing
-                //even though the short ones have set the bool to false so we do a check
-                if(CuePlaybackMode == CuePlaybackMode.Parallel)
-                foreach (Sound child in Children)
-                {
-                    {
-                        if (child.PlayingInstance.State == SoundState.Playing)
-                        {
-                            Set(ref _playing, true);
-                            return;
-                        }
-                    }
-                }
-                Set(ref _playing, value);
-            }
-        }
-
-        #endregion
 
         private void PlaySerial()
         {
@@ -253,12 +257,39 @@ namespace AudioTool.Data
             if (Playing && _playingIndex < Children.Count)
             {
                 var sound = Children[_playingIndex] as Sound;
-                var duration = sound.SoundEffect.Duration;
-                sound.Play();
-                _playingIndex++;
-                _timer.Stop();
-                _timer.Interval = duration.TotalMilliseconds;
-                _timer.Start();
+                if (!sound.IsMuted)
+                {
+                    var duration = sound.SoundEffect.Duration;
+                    sound.Play();
+                    _playingIndex++;
+                    _timer.Stop();
+                    _timer.Interval = duration.TotalMilliseconds;
+                    _timer.Start(); 
+                }
+                else
+                {
+                    //We'll do a quick check to make sure that not all the sounds are muted in serial
+                    //so we don't get an infinite loop
+                    bool allMuted = true;
+                    foreach (Sound child in Children)
+                    {
+                        if (!child.IsMuted)
+                        {
+                            allMuted = false;
+                        }
+                    }
+                    if(allMuted == false)
+                    {
+                        ++_playingIndex;
+                        PlaySerial();
+                    }
+                    else
+                    {
+                        MessageBox.Show("All sounds are Muted");
+                        Stop();
+                    }
+                }
+                
             }
 
         }
