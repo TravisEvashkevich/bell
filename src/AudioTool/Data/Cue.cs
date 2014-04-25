@@ -212,11 +212,19 @@ namespace AudioTool.Data
                             if (child.PlayingInstance.State == SoundState.Playing)
                             {
                                 Set(ref _playing, true);
+                                foreach (Sound sound in Children)
+                                {
+                                    sound.ParentIsPlaying = true;
+                                }
                                 return;
                             }
                         }
                     }
                 Set(ref _playing, value);
+                foreach (Sound sound in Children)
+                {
+                    sound.ParentIsPlaying = value;
+                }
             }
         }
 

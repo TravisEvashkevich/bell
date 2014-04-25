@@ -194,6 +194,13 @@ namespace AudioTool.Data
 
         #endregion
 
+        private bool _parentIsPlaying ;
+
+        public bool ParentIsPlaying
+        {
+            get { return _parentIsPlaying; } set { Set(ref _parentIsPlaying, value); }
+        }
+
         public Sound()
         {
             Name = "New Sound";
@@ -336,6 +343,7 @@ namespace AudioTool.Data
         public void Stop()
         {
             PlayingInstance.Stop(true);
+            (Parent as Cue).CheckIfAllSoundsMuted((Parent as Cue).Children.ToList());
         }
 
         public void Pause()
