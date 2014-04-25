@@ -294,6 +294,15 @@ namespace AudioTool.Data
                 var random = new Random();
                 var index = random.Next(_soundsList1.Count);
                 var sound = _soundsList1[index] as Sound;
+                //check to see if the sound is muted, if it is, 
+                //remove it from the list and then call playrandomcycle again so it can find another sound that does play
+                //Return after it comes out of the method so that way it doesn't try to play a sound that is removed
+                if (sound.IsMuted)
+                {
+                    _soundsList1.Remove(sound);
+                    PlayRandomCycle();
+                    return;
+                }
                 sound.Play();
                 //Remove sound from list.
                 _soundsList1.Remove(sound);
@@ -321,7 +330,7 @@ namespace AudioTool.Data
                 case CuePlaybackMode.Serial:
                     _playingIndex = 0;
                     PlaySerial();
-                    break;
+                    break; 
             }
         }
 

@@ -16,6 +16,11 @@ namespace AudioTool.Data
 {
     public sealed class Sound : NodeWithName
     {
+        #region Mute
+        private bool _isMuted;
+        public bool IsMuted { get { return _isMuted; } set { Set(ref _isMuted, value); } }
+        #endregion
+
         #region FilePath
 
         private string _filePath;
@@ -194,6 +199,7 @@ namespace AudioTool.Data
             Name = "New Sound";
             AudioManager.SoundStateChanged += AudioManager_SoundStateChanged;
             SoundState = SoundState.Stopped;
+            IsMuted = false;
         }
 
         void AudioManager_SoundStateChanged(object sender, SoundStateChangedEventArgs e)
@@ -248,7 +254,7 @@ namespace AudioTool.Data
             {
                 MessageBox.Show(exc.ToString());
             }
-        }
+        } 
 
         public void RefreshProperties()
         {
@@ -293,7 +299,7 @@ namespace AudioTool.Data
         {
             if (PlayingInstance.State == SoundState.Paused)
                 PlayingInstance.Play();
-            else
+            else if(!IsMuted)
             {
                 if (Parent != null)
                 {
@@ -324,6 +330,8 @@ namespace AudioTool.Data
                 
             }
         }
+
+
 
         public void Stop()
         {

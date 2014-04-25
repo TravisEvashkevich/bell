@@ -145,18 +145,24 @@
 					<ColumnDefinition Width="Auto"></ColumnDefinition>
 					<ColumnDefinition Width="Auto"></ColumnDefinition>
 				</Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 				<TextBlock ><Run Text="{Binding Name}"/></TextBlock>
-                <Button Command="{Binding StopCommand}" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding SoundState, ConverterParameter=Stop, Converter={StaticResource SoundStateToVisibilityConverter}}" Background="{x:Null}" BorderBrush="{x:Null}">
+                <CheckBox Grid.Row="1" Grid.Column="0" IsChecked="{Binding IsMuted}"/>
+                <Label Grid.Column="0" Grid.Row="1" Content=" Muted" Margin="10,-5,0,0"/>
+                <Button Grid.Row="0" Grid.RowSpan="2" Command="{Binding StopCommand}" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding SoundState, ConverterParameter=Stop, Converter={StaticResource SoundStateToVisibilityConverter}}" Background="{x:Null}" BorderBrush="{x:Null}">
                 	<Button.Content>
                 		<Image Source="../Content/stop.png"></Image>
                 	</Button.Content>
                 </Button>
-                <Button Command="{Binding PlayCommand}" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding SoundState, ConverterParameter=Play, Converter={StaticResource SoundStateToVisibilityConverter}}" Background="{x:Null}" BorderBrush="{x:Null}">
+                <Button Grid.Row="0" Grid.RowSpan="2" Command="{Binding PlayCommand}" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding SoundState, ConverterParameter=Play, Converter={StaticResource SoundStateToVisibilityConverter}}" Background="{x:Null}" BorderBrush="{x:Null}">
                 	<Button.Content>
                 		<Image Source="../Content/play.png"></Image>
                 	</Button.Content>
                 </Button>
-                <Button Command="{Binding PauseCommand}" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding SoundState, ConverterParameter=Pause, Converter={StaticResource SoundStateToVisibilityConverter}}" Background="{x:Null}" BorderBrush="{x:Null}">
+                <Button Grid.Row="0" Grid.RowSpan="2" Command="{Binding PauseCommand}" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding SoundState, ConverterParameter=Pause, Converter={StaticResource SoundStateToVisibilityConverter}}" Background="{x:Null}" BorderBrush="{x:Null}">
                 	<Button.Content>
                 		<Image Source="../Content/pause.png"></Image>
                 	</Button.Content>
