@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using AudioTool.Core;
 using AudioTool.Data;
@@ -355,6 +357,56 @@ namespace AudioTool.ViewModel
 
         #endregion
 
+        #region
+
+        public SmartCommand<object> ReimportArbitraryCommand { get; private set; }
+
+        public void ExecuteReimportArbitraryCommand(object o)
+        {
+            var dlg = new OpenFileDialog();
+
+            dlg.Filter = ".Wav (*.Wav)|*.Wav";
+            dlg.Multiselect = true;
+            var result = dlg.ShowDialog();
+
+            if (result == true)
+            {
+                string[] names = dlg.FileNames;
+
+                for (int i = 0;  i < names.Count(); i++)
+                {
+                    var name = Path.GetFileNameWithoutExtension(names[i]);
+                    ApplyCriteria(name, names[i], new Stack<NodeWithName>(), Documents[0]);
+                }
+            }
+        }
+
+        public void ApplyCriteria(string criteria, string fullPath, Stack<NodeWithName> ancestors, NodeWithName startPoint)
+        {
+            if (IsCriteriaMatched(criteria, startPoint))
+            {
+                (startPoint as Sound).ReimportSoundFile(fullPath);
+
+                MessageBox.Show(String.Format("We reimported {0} successfully.", Path.GetFileNameWithoutExtension(criteria)));
+            }
+
+            ancestors.Push(startPoint);
+            if (startPoint.Children != null && startPoint.Children.Count > 0)
+            {
+                foreach (var child in startPoint.Children)
+                    ApplyCriteria(criteria, fullPath, ancestors, child as NodeWithName);
+            }
+
+            ancestors.Pop();
+        }
+
+        private bool IsCriteriaMatched(string criteria, NodeWithName check)
+        {
+            return String.IsNullOrEmpty(criteria) || check.Name.ToLower().Contains(criteria.ToLower());
+        }
+
+        #endregion
+
         protected override void InitializeCommands()
         {
             ClosingCommand = new SmartCommand<object>(ExecuteClosingCommand, CanExecuteClosingCommand);
@@ -369,6 +421,7 @@ namespace AudioTool.ViewModel
             RemoveCommand = new SmartCommand<object>(ExecuteRemoveCommand, CanExecuteRemoveCommand);
             ReImportSelectedSoundCommand = new SmartCommand<object>(ExecuteReImportSelectedSoundCommand);
             ReImportFromNewPathCommand = new SmartCommand<object>(ExecuteReImportFromNewPathCommand);
+            ReimportArbitraryCommand = new SmartCommand<object>(ExecuteReimportArbitraryCommand);
         }
         #endregion
 

@@ -588,7 +588,7 @@ namespace AudioTool.Data
             AudioManager.AddSoundInstance(PlayingInstance);
         }
 
-        private void ReimportSoundFile(string path)
+        public void ReimportSoundFile(string path)
         {
             //Does a reimport with the specified path
             var soundfile = new FileStream(path, FileMode.Open);
