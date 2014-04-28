@@ -376,12 +376,12 @@ namespace AudioTool.ViewModel
                 for (int i = 0;  i < names.Count(); i++)
                 {
                     var name = Path.GetFileNameWithoutExtension(names[i]);
-                    ApplyCriteria(name, names[i], new Stack<NodeWithName>(), Documents[0]);
+                    FindMatches(name, names[i], new Stack<NodeWithName>(), Documents[0]);
                 }
             }
         }
 
-        public void ApplyCriteria(string criteria, string fullPath, Stack<NodeWithName> ancestors, NodeWithName startPoint)
+        public void FindMatches(string criteria, string fullPath, Stack<NodeWithName> ancestors, NodeWithName startPoint)
         {
             if (IsCriteriaMatched(criteria, startPoint))
             {
@@ -394,7 +394,7 @@ namespace AudioTool.ViewModel
             if (startPoint.Children != null && startPoint.Children.Count > 0)
             {
                 foreach (var child in startPoint.Children)
-                    ApplyCriteria(criteria, fullPath, ancestors, child as NodeWithName);
+                    FindMatches(criteria, fullPath, ancestors, child as NodeWithName);
             }
 
             ancestors.Pop();
