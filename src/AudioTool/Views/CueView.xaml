@@ -49,10 +49,11 @@
                 </StackPanel>
             </StackPanel>
         </Grid>
-        <Grid Margin="10,10,0,0" >
+        <Grid Margin="10,10,0,0" Width="{Binding ElementName=RefImage, Path=Width}" Height="{Binding ElementName=RefImage, Path=Height}" ClipToBounds="True">
+            <Image x:Name="RefImage" Source="../Content/GreenScreen.png"/>
             <Canvas x:Name="TheCanvas">
                 <!--Doubled the size for easier viewing-->
-                <Image Source="../Content/GreenScreen.png"/>
+                
                 <Ellipse
                   Canvas.Top="{Binding Cue.CenterPoint.Y}"
                   Canvas.Left="{Binding Cue.CenterPoint.X}"
@@ -60,7 +61,11 @@
                   Height="{Binding Cue.Radius, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                   Width="{Binding Cue.Radius, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                   StrokeThickness="1"
-                  Stroke="#FFFFFF00"/>
+                  Stroke="#FFFFFF00">
+                    <Ellipse.OpacityMask>
+                        <VisualBrush Visual="{Binding ElementName=RefImage}"/>
+                    </Ellipse.OpacityMask>
+                    </Ellipse>
             </Canvas>
             
         </Grid>
