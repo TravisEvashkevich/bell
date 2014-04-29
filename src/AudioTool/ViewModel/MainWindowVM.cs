@@ -180,7 +180,10 @@ namespace AudioTool.ViewModel
             Glue.Instance.Document = Document.Open();
             Glue.Instance.DocumentIsSaved = true;
             Documents.Clear();
-            Documents.Add(Glue.Instance.Document);
+            //if you exit an open before actually selecting something, you get null and it actually
+            //opens up reimporting without a document since you add a null into the documents
+            if(Glue.Instance.Document != null)
+                Documents.Add(Glue.Instance.Document);
         }
         #endregion
 
@@ -308,12 +311,21 @@ namespace AudioTool.ViewModel
 
         public SmartCommand<object> ReImportFromNewPathCommand { get; private set; }
 
+        public bool CanExecuteReimportCommand(object arg)
+        {
+            return Documents.Count != 0 && Documents != null;
+        }
+
         public void ExecuteReImportFromNewPathCommand(object obj)
         {
+            if(_currentSelectedNode == null || _currentSelectedNode.GetType() != typeof(Sound))
+                return;
+
             var sound = _currentSelectedNode as Sound;
             //The thing is, the filename could have technically changed or have a different syntax or something
             var dialog = new OpenFileDialog();
-
+            dialog.Filter = ".Wav (*.Wav)|*.Wav";
+            
             bool? result = dialog.ShowDialog();
             if (result == true)
             {
@@ -321,15 +333,12 @@ namespace AudioTool.ViewModel
                 //if they are different
                 //get the path
                 string fileName = Path.GetFileNameWithoutExtension(dialog.FileName);
-                var endIndex = fileName.LastIndexOf('\\');
-                //for the sake of it, we get the index, then add one so we keep the backslash as well in the substring
-                fileName = fileName.Substring(endIndex + 1, fileName.Length - 1);
 
                 if (fileName != sound.Name)
                 {
                     if (MessageBox.Show(
-                        "The selected file has a different name than what you are trying to overwrite. Would you like to proceed anyway?",
-                        "FileName doesn't match", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                                String.Format("The selected file \"{0}\" has a different name than what you are trying to overwrite ({1}). Would you like to proceed anyway?", fileName, sound.Name),
+                                "FileName doesn't match", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                     {
                         //pass the filename from the dialog to the Reimport new version so it will Create and overwrite
                         //the sound thus updating in the program.
@@ -357,26 +366,29 @@ namespace AudioTool.ViewModel
 
         #endregion
 
-        #region
+        #region Reimport Arbitrary Command
 
         public SmartCommand<object> ReimportArbitraryCommand { get; private set; }
 
         public void ExecuteReimportArbitraryCommand(object o)
         {
-            var dlg = new OpenFileDialog();
-
-            dlg.Filter = ".Wav (*.Wav)|*.Wav";
-            dlg.Multiselect = true;
-            var result = dlg.ShowDialog();
-
-            if (result == true)
+            if(Documents.Count != 0)
             {
-                string[] names = dlg.FileNames;
+                var dlg = new OpenFileDialog();
 
-                for (int i = 0;  i < names.Count(); i++)
+                dlg.Filter = ".Wav (*.Wav)|*.Wav";
+                dlg.Multiselect = true;
+                var result = dlg.ShowDialog();
+
+                if (result == true)
                 {
-                    var name = Path.GetFileNameWithoutExtension(names[i]);
-                    FindMatches(name, names[i], new Stack<NodeWithName>(), Documents[0]);
+                    string[] names = dlg.FileNames;
+
+                    for (int i = 0;  i < names.Count(); i++)
+                    {
+                        var name = Path.GetFileNameWithoutExtension(names[i]);
+                        FindMatches(name, names[i], new Stack<NodeWithName>(), Documents[0]);
+                    }
                 }
             }
         }
@@ -419,9 +431,9 @@ namespace AudioTool.ViewModel
             CloseCommand = new SmartCommand<object>(ExecuteCloseCommand, CanExecuteCloseCommand);
             ExportCommand = new SmartCommand<object>(ExecuteExportCommand, CanExecuteExportCommand);
             RemoveCommand = new SmartCommand<object>(ExecuteRemoveCommand, CanExecuteRemoveCommand);
-            ReImportSelectedSoundCommand = new SmartCommand<object>(ExecuteReImportSelectedSoundCommand);
-            ReImportFromNewPathCommand = new SmartCommand<object>(ExecuteReImportFromNewPathCommand);
-            ReimportArbitraryCommand = new SmartCommand<object>(ExecuteReimportArbitraryCommand);
+            ReImportSelectedSoundCommand = new SmartCommand<object>(ExecuteReImportSelectedSoundCommand, CanExecuteReimportCommand);
+            ReImportFromNewPathCommand = new SmartCommand<object>(ExecuteReImportFromNewPathCommand, CanExecuteReimportCommand);
+            ReimportArbitraryCommand = new SmartCommand<object>(ExecuteReimportArbitraryCommand, CanExecuteReimportCommand);
         }
         #endregion
 
