@@ -465,6 +465,7 @@ namespace AudioTool.Data
                 Children.RemoveAt(index);
                 Children.Insert(Children.Count,sound);
             }
+            Glue.Instance.DocumentIsSaved = false;
         }
 
         public void IncreaseSoundIndex(Sound sound)
@@ -486,6 +487,7 @@ namespace AudioTool.Data
                 Children.RemoveAt(index);
                 Children.Insert(0, sound);
             }
+            Glue.Instance.DocumentIsSaved = false;
         }
 
         #region PlayParallelCommand
