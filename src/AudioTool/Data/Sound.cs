@@ -323,6 +323,8 @@ namespace AudioTool.Data
                         AudioManager.RemoveSoundInstance(PlayingInstance);
                         lock (Sync)
                         {
+                            //make a copy to the playing instance before you create a new one then dispose it after the new one is made
+                            //should make it so the "callback" doesn't ref to a object that is now disposed (seems to cure the crashes so far)
                             var instance = PlayingInstance;
                             PlayingInstance = SoundEffect.CreateInstance();
                             instance.Dispose();
