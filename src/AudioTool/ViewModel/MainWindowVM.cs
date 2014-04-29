@@ -313,7 +313,7 @@ namespace AudioTool.ViewModel
 
         public bool CanExecuteReimportCommand(object arg)
         {
-            return Documents.Count != 0 && Documents != null;
+            return Documents.Count != 0 && Documents != null && _currentSelectedNode is Sound;
         }
 
         public void ExecuteReImportFromNewPathCommand(object obj)
@@ -324,6 +324,7 @@ namespace AudioTool.ViewModel
             var sound = _currentSelectedNode as Sound;
             //The thing is, the filename could have technically changed or have a different syntax or something
             var dialog = new OpenFileDialog();
+            dialog.Title = "Re Import from New Location";
             dialog.Filter = ".Wav (*.Wav)|*.Wav";
             
             bool? result = dialog.ShowDialog();
@@ -369,6 +370,11 @@ namespace AudioTool.ViewModel
         #region Reimport Arbitrary Command
 
         public SmartCommand<object> ReimportArbitraryCommand { get; private set; }
+
+        public bool CanExecuteReimportMultiCommand(object arg)
+        {
+            return Documents.Count != 0 && Documents != null;
+        }
 
         public void ExecuteReimportArbitraryCommand(object o)
         {
@@ -419,6 +425,28 @@ namespace AudioTool.ViewModel
 
         #endregion
 
+        #region
+
+        public SmartCommand<object> ReimportCueCommand { get; private set; }
+
+        public bool CanExecuteReimportCueCommand(object args)
+        {
+            return Documents.Count != 0 && Documents != null && _currentSelectedNode is Cue;
+        }
+
+        private void ExecuteReimportCueCommand(object o)
+        {
+            if (_currentSelectedNode is Cue)
+            {
+                foreach (Sound childrenSound in _currentSelectedNode.Children)
+                {
+                    childrenSound.ExecuteReImport(null);
+                }
+            }
+        }
+
+        #endregion
+
         protected override void InitializeCommands()
         {
             ClosingCommand = new SmartCommand<object>(ExecuteClosingCommand, CanExecuteClosingCommand);
@@ -431,9 +459,11 @@ namespace AudioTool.ViewModel
             CloseCommand = new SmartCommand<object>(ExecuteCloseCommand, CanExecuteCloseCommand);
             ExportCommand = new SmartCommand<object>(ExecuteExportCommand, CanExecuteExportCommand);
             RemoveCommand = new SmartCommand<object>(ExecuteRemoveCommand, CanExecuteRemoveCommand);
+
             ReImportSelectedSoundCommand = new SmartCommand<object>(ExecuteReImportSelectedSoundCommand, CanExecuteReimportCommand);
             ReImportFromNewPathCommand = new SmartCommand<object>(ExecuteReImportFromNewPathCommand, CanExecuteReimportCommand);
-            ReimportArbitraryCommand = new SmartCommand<object>(ExecuteReimportArbitraryCommand, CanExecuteReimportCommand);
+            ReimportArbitraryCommand = new SmartCommand<object>(ExecuteReimportArbitraryCommand, CanExecuteReimportMultiCommand);
+            ReimportCueCommand = new SmartCommand<object>(ExecuteReimportCueCommand, CanExecuteReimportCueCommand);
         }
         #endregion
 

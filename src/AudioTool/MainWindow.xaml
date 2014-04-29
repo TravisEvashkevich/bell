@@ -31,7 +31,8 @@
             <MenuItem Header="ReImport">
                 <MenuItem Header="Re-Import Selected Sound" Command="{Binding ReImportSelectedSoundCommand}" InputGestureText="Ctrl+R"/>
                 <MenuItem Header="Re-Import Selected Sound from new location" Command="{Binding ReImportFromNewPathCommand}" InputGestureText="Ctrl+Shift+R"/>
-                <MenuItem Header="Re-Import (Select from System)" Command="{Binding ReimportArbitraryCommand}"/>
+                <MenuItem Header="Re-Import Selected Cue" Command="{Binding ReimportCueCommand}" InputGestureText="Ctrl+Shift+C"/>
+                <MenuItem Header="Re-Import Multiple" Command="{Binding ReimportArbitraryCommand}"/>
             </MenuItem>
             <MenuItem Header="Preferences" Command="{Binding OpenPreferencesWindowCommand}">
             </MenuItem>

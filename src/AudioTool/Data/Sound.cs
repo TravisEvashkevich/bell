@@ -523,11 +523,12 @@ namespace AudioTool.Data
             if (!File.Exists(FilePath))
             {
                 //Search says it doesn't exist, inform the user to FIND the file
-                if (MessageBox.Show("The file doesn't exist at the old path, would you like to find the file?",
+                if (MessageBox.Show(string.Format("The file {0} doesn't exist at the old path, would you like to find the file?",Path.GetFileNameWithoutExtension(FilePath)),
                     "Missing File.", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
                     //The thing is, the filename could have technically changed or have a different syntax or something
                     var dialog = new OpenFileDialog();
+                    dialog.Title = string.Format("Find {0}", Path.GetFileNameWithoutExtension(FilePath));
                     dialog.Filter = ".Wav (*.Wav)|*.Wav";
 
                     bool? result = dialog.ShowDialog();
@@ -547,11 +548,13 @@ namespace AudioTool.Data
                                 //pass the filename from the dialog to the Reimport new version so it will Create and overwrite
                                 //the sound thus updating in the program.
                                 ReimportSoundFile(dialog.FileName);
+                                MessageBox.Show(String.Format("{0} was reimported successfully!", Path.GetFileNameWithoutExtension(FilePath)), "Success!");
                             }
                         }
                         else
                         {
                             ReimportSoundFile(dialog.FileName);
+                            MessageBox.Show(String.Format("{0} was reimported successfully!", Path.GetFileNameWithoutExtension(FilePath)), "Success!");
                         }
                     }
                 }

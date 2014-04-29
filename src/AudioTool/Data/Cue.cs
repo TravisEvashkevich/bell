@@ -678,7 +678,7 @@ namespace AudioTool.Data
         {
             foreach (Sound child in Children)
             {
-                child.ExecuteReImport(child);
+                child.ExecuteReImport(null);
             }
         }
         #endregion
