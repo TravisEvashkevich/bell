@@ -17,7 +17,8 @@
     <converters:CueChildrenCountToVisibility x:Key="CueChildrenCountToVisibility" />
     <converters:SoundStateToVisibilityConverter x:Key="SoundStateToVisibilityConverter" />
     <converters:BooleanToVisiblityConverter x:Key="BooleanToVisiblityConverter"/>
-    
+    <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+
     <properties:Settings x:Key="Settings" />
     <DataTemplate DataType="{x:Type viewModel:DocumentViewVM}">
         <views:DocumentView HorizontalAlignment="Left" VerticalAlignment="Top" />
@@ -38,22 +39,22 @@
     <Style x:Key="SearchableTreeView" TargetType="{x:Type TreeView}">
         <Style.Resources>
             <HierarchicalDataTemplate DataType="{x:Type data:Document}" ItemsSource="{Binding Path=Children, Converter={StaticResource OrderNodesConverter}}">
-        <Border MinWidth="250" Background="{Binding Default.DocumentStubColor, Source={StaticResource Settings}, Mode=TwoWay, Converter={StaticResource ColorToBrushConterver}}"  BorderThickness="1" CornerRadius="2" Margin="2" Padding="2" Height="40" >
-            <Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-				</Grid.RowDefinitions>
-				<TextBlock Text="{Binding Name}" />
-                <TextBlock Text="{Binding Children.Count, StringFormat={}Folders: {0}}" Grid.Row="1" />  
-            </Grid>
-            <Border.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="New Folder" Command="{Binding NewFolderCommand}"></MenuItem>
-                </ContextMenu>
-            </Border.ContextMenu>
-        </Border>
-    </HierarchicalDataTemplate>
+                <Border MinWidth="250" Background="{Binding Default.DocumentStubColor, Source={StaticResource Settings}, Mode=TwoWay, Converter={StaticResource ColorToBrushConterver}}"  BorderThickness="1" CornerRadius="2" Margin="2" Padding="2" Height="40" >
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{Binding Name}" />
+                        <TextBlock Text="{Binding Children.Count, StringFormat={}Folders: {0}}" Grid.Row="1" />
+                    </Grid>
+                    <Border.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="New Folder" Command="{Binding NewFolderCommand}"></MenuItem>
+                        </ContextMenu>
+                    </Border.ContextMenu>
+                </Border>
+            </HierarchicalDataTemplate>
         </Style.Resources>
         <Setter Property="ItemContainerStyle">
             <Setter.Value>
@@ -75,15 +76,15 @@
     <HierarchicalDataTemplate DataType="{x:Type data:Folder}" ItemsSource="{Binding Children, Converter={StaticResource OrderNodesConverter}}">
         <Border MinWidth="250"  Background="{Binding Default.FolderStubColor, Source={StaticResource Settings}, Converter={StaticResource ColorToBrushConterver}}" BorderThickness="1" CornerRadius="2" Margin="2" Padding="2" Height="40">
             <Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-				</Grid.RowDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
                 <TextBlock Text="{Binding Name}" />
-				<StackPanel Grid.Row="1" Orientation="Horizontal">
-				<TextBlock Text="{Binding Folders.Count, StringFormat={}Folders: {0}}" />
-				<TextBlock Text="{Binding Cues.Count, StringFormat={}Cues: {0}}" Margin="10,0,0,0" />
-				</StackPanel>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <TextBlock Text="{Binding Folders.Count, StringFormat={}Folders: {0}}" />
+                    <TextBlock Text="{Binding Cues.Count, StringFormat={}Cues: {0}}" Margin="10,0,0,0" />
+                </StackPanel>
             </Grid>
             <Border.ContextMenu>
                 <ContextMenu>
@@ -96,12 +97,12 @@
     </HierarchicalDataTemplate>
 
     <HierarchicalDataTemplate DataType="{x:Type data:Cue}" ItemsSource="{Binding Children}">
-        <Border MinWidth="250"  Background="{Binding Default.CueStubColor, Source={StaticResource Settings}, Converter={StaticResource ColorToBrushConterver}}" BorderThickness="1" CornerRadius="2" Margin="2" Padding="2" Height="40" >
-            <Grid>
+        <Border MinWidth="250"  Background="{Binding Default.CueStubColor, Source={StaticResource Settings}, Converter={StaticResource ColorToBrushConterver}}" BorderThickness="1" CornerRadius="2" Margin="2" Padding="2" Height="45" >
+            <Grid DockPanel.Dock="Right">
                 <Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-				</Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition></ColumnDefinition>
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -122,49 +123,69 @@
             <Border.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Add sound" Command="{Binding AddSoundCommand}"></MenuItem>
+                    <MenuItem Header="Mute Options">
+                        <MenuItem Header="Mute All Sounds" Command="{Binding MuteAllCommand}"/>
+                        <MenuItem Header="Un-Mute All Sounds" Command="{Binding UnMuteAllCommand}"/>
+                    </MenuItem>
                     <MenuItem Header="{Binding Children.Count, Converter={StaticResource CueChildrenCountToHeader}}" Command="{Binding PlayParallelCommand}"></MenuItem>
                     <MenuItem Visibility="{Binding Children.Count, Converter={StaticResource CueChildrenCountToVisibility}}" Header="Play serial" Command="{Binding PlaySerialCommand}"></MenuItem>
                     <MenuItem Visibility="{Binding Children.Count, Converter={StaticResource CueChildrenCountToVisibility}}" Header="Play random" Command="{Binding PlayRandomCommand}"></MenuItem>
                     <MenuItem Visibility="{Binding Children.Count, Converter={StaticResource CueChildrenCountToVisibility}}" Header="Play cycle" Command="{Binding PlayCycleCommand}"></MenuItem>
                     <MenuItem Visibility="{Binding Children.Count, Converter={StaticResource CueChildrenCountToVisibility}}" Header="Play random cycle" Command="{Binding PlayRandomCycleCommand}"></MenuItem>
                     <MenuItem Header="Stop" Command="{Binding StopCommand}"></MenuItem>
+                    <MenuItem Header="ReImport">
+                        <MenuItem Header="ReImport All" Command="{Binding ReimportAllCommand}"/>
+                    </MenuItem>
                     <MenuItem Header="Remove" Command="{Binding RemoveCommand}"></MenuItem>
                 </ContextMenu>
             </Border.ContextMenu>
         </Border>
     </HierarchicalDataTemplate>
     <HierarchicalDataTemplate DataType="{x:Type data:Sound}" >
-        <Border MinWidth="250" Background="{Binding Default.SoundStubColor, Source={StaticResource Settings}, Converter={StaticResource ColorToBrushConterver}}" BorderThickness="1" CornerRadius="2" Margin="2" Padding="2" Height="40" >
-            <Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition></ColumnDefinition>
-					<ColumnDefinition Width="Auto"></ColumnDefinition>
-					<ColumnDefinition Width="Auto"></ColumnDefinition>
-					<ColumnDefinition Width="Auto"></ColumnDefinition>
-				</Grid.ColumnDefinitions>
-				<TextBlock ><Run Text="{Binding Name}"/></TextBlock>
-                <Button Command="{Binding StopCommand}" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding SoundState, ConverterParameter=Stop, Converter={StaticResource SoundStateToVisibilityConverter}}" Background="{x:Null}" BorderBrush="{x:Null}">
-                	<Button.Content>
-                		<Image Source="../Content/stop.png"></Image>
-                	</Button.Content>
-                </Button>
-                <Button Command="{Binding PlayCommand}" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding SoundState, ConverterParameter=Play, Converter={StaticResource SoundStateToVisibilityConverter}}" Background="{x:Null}" BorderBrush="{x:Null}">
-                	<Button.Content>
-                		<Image Source="../Content/play.png"></Image>
-                	</Button.Content>
-                </Button>
-                <Button Command="{Binding PauseCommand}" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding SoundState, ConverterParameter=Pause, Converter={StaticResource SoundStateToVisibilityConverter}}" Background="{x:Null}" BorderBrush="{x:Null}">
-                	<Button.Content>
-                		<Image Source="../Content/pause.png"></Image>
-                	</Button.Content>
-                </Button>
-            </Grid>
+        <Border MinWidth="250" Background="{Binding Default.SoundStubColor, Source={StaticResource Settings}, Converter={StaticResource ColorToBrushConterver}}" BorderThickness="1" CornerRadius="2" Margin="2" Padding="2" Height="45" >
+            <DockPanel>
+                <StackPanel Orientation="Vertical">
+                    <Button Content="&#94;" Height="20" Width="30" IsEnabled="{Binding ParentIsPlaying, Converter={StaticResource InverseBooleanConverter}, UpdateSourceTrigger=PropertyChanged}" Command="{Binding MoveUpInCueCommand}"/>
+                    <Button Content="v"     Height="20" Width="30" IsEnabled="{Binding ParentIsPlaying, Converter={StaticResource InverseBooleanConverter}, UpdateSourceTrigger=PropertyChanged}" Command="{Binding MoveDownInCueCommand}"/>
+                </StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock ><Run Text="{Binding Name}"/></TextBlock>
+                    <CheckBox Grid.Row="1" Grid.Column="0" IsChecked="{Binding IsMuted}"/>
+                    <Label Grid.Column="0" Grid.Row="1" Content=" Muted" Margin="10,-5,0,0"/>
+                    <Button Grid.Row="0" Grid.RowSpan="2" Command="{Binding StopCommand}" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding SoundState, ConverterParameter=Stop, Converter={StaticResource SoundStateToVisibilityConverter}}" Background="{x:Null}" BorderBrush="{x:Null}">
+                        <Button.Content>
+                            <Image Source="../Content/stop.png"></Image>
+                        </Button.Content>
+                    </Button>
+                    <Button Grid.Row="0" Grid.RowSpan="2" Command="{Binding PlayCommand}" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding SoundState, ConverterParameter=Play, Converter={StaticResource SoundStateToVisibilityConverter}}" Background="{x:Null}" BorderBrush="{x:Null}">
+                        <Button.Content>
+                            <Image Source="../Content/play.png"></Image>
+                        </Button.Content>
+                    </Button>
+                    <Button Grid.Row="0" Grid.RowSpan="2" Command="{Binding PauseCommand}" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding SoundState, ConverterParameter=Pause, Converter={StaticResource SoundStateToVisibilityConverter}}" Background="{x:Null}" BorderBrush="{x:Null}">
+                        <Button.Content>
+                            <Image Source="../Content/pause.png"></Image>
+                        </Button.Content>
+                    </Button>
+                </Grid>
+            </DockPanel>
             <Border.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Play" Command="{Binding PlayCommand}"></MenuItem>
                     <MenuItem Header="Pause" Command="{Binding PauseCommand}"></MenuItem>
                     <MenuItem Header="Stop" Command="{Binding StopCommand}"></MenuItem>
                     <MenuItem Header="Remove" Command="{Binding RemoveCommand}"></MenuItem>
+                    <MenuItem Header="ReImport Selected" Command="{Binding ReImportCommand}"/>
                 </ContextMenu>
             </Border.ContextMenu>
         </Border>

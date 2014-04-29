@@ -47,7 +47,8 @@ namespace AudioTool
             InputBindings.Add(new KeyBinding(instance.CloseCommand, new KeyGesture(Key.Q, ModifierKeys.Control)));
             InputBindings.Add(new KeyBinding(instance.ExportCommand, new KeyGesture(Key.E, ModifierKeys.Control)));
             InputBindings.Add(new KeyBinding(instance.RemoveCommand, new KeyGesture(Key.Delete)));
-            //InputBindings.Add(new KeyBinding(instance.CopyCommand, new KeyGesture(Key.C, ModifierKeys.Control)));
+            InputBindings.Add(new KeyBinding(instance.ReImportSelectedSoundCommand, new KeyGesture(Key.R, ModifierKeys.Control)));
+            InputBindings.Add(new KeyBinding(instance.ReImportFromNewPathCommand, new KeyGesture(Key.R, ModifierKeys.Control | ModifierKeys.Shift)));
             //InputBindings.Add(new KeyBinding(instance.PasteCommand, new KeyGesture(Key.V, ModifierKeys.Control)));
         }
 

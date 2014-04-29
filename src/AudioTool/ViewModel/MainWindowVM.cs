@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using AudioTool.Core;
 using AudioTool.Data;
@@ -302,9 +304,112 @@ namespace AudioTool.ViewModel
         }
         #endregion
 
+        #region ReImport from New Location Command
+
+        public SmartCommand<object> ReImportFromNewPathCommand { get; private set; }
+
+        public void ExecuteReImportFromNewPathCommand(object obj)
+        {
+            var sound = _currentSelectedNode as Sound;
+            //The thing is, the filename could have technically changed or have a different syntax or something
+            var dialog = new OpenFileDialog();
+
+            bool? result = dialog.ShowDialog();
+            if (result == true)
+            {
+                //we'll check the filename they selected against the filename in the sound and ask if they want to overwrite
+                //if they are different
+                //get the path
+                string fileName = Path.GetFileNameWithoutExtension(dialog.FileName);
+                var endIndex = fileName.LastIndexOf('\\');
+                //for the sake of it, we get the index, then add one so we keep the backslash as well in the substring
+                fileName = fileName.Substring(endIndex + 1, fileName.Length - 1);
+
+                if (fileName != sound.Name)
+                {
+                    if (MessageBox.Show(
+                        "The selected file has a different name than what you are trying to overwrite. Would you like to proceed anyway?",
+                        "FileName doesn't match", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                    {
+                        //pass the filename from the dialog to the Reimport new version so it will Create and overwrite
+                        //the sound thus updating in the program.
+                        sound.ExecuteReImport(dialog.FileName);
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #region ReImportSelectedSound Command
+
+        public SmartCommand<object> ReImportSelectedSoundCommand { get; private set; }
+
+        public void ExecuteReImportSelectedSoundCommand(object obj)
+        {
+            //Reimport called on the current Selected sound (the one you clicked etc)
+            if (_currentSelectedNode is Sound)
+            {
+                var sound = _currentSelectedNode as Sound;
+                sound.ExecuteReImport(null);
+            }
+        }
+
+        #endregion
+
+        #region
+
+        public SmartCommand<object> ReimportArbitraryCommand { get; private set; }
+
+        public void ExecuteReimportArbitraryCommand(object o)
+        {
+            var dlg = new OpenFileDialog();
+
+            dlg.Filter = ".Wav (*.Wav)|*.Wav";
+            dlg.Multiselect = true;
+            var result = dlg.ShowDialog();
+
+            if (result == true)
+            {
+                string[] names = dlg.FileNames;
+
+                for (int i = 0;  i < names.Count(); i++)
+                {
+                    var name = Path.GetFileNameWithoutExtension(names[i]);
+                    FindMatches(name, names[i], new Stack<NodeWithName>(), Documents[0]);
+                }
+            }
+        }
+
+        public void FindMatches(string criteria, string fullPath, Stack<NodeWithName> ancestors, NodeWithName startPoint)
+        {
+            if (IsCriteriaMatched(criteria, startPoint))
+            {
+                (startPoint as Sound).ReimportSoundFile(fullPath);
+
+                MessageBox.Show(String.Format("We reimported {0} successfully.", Path.GetFileNameWithoutExtension(criteria)));
+            }
+
+            ancestors.Push(startPoint);
+            if (startPoint.Children != null && startPoint.Children.Count > 0)
+            {
+                foreach (var child in startPoint.Children)
+                    FindMatches(criteria, fullPath, ancestors, child as NodeWithName);
+            }
+
+            ancestors.Pop();
+        }
+
+        private bool IsCriteriaMatched(string criteria, NodeWithName check)
+        {
+            return String.IsNullOrEmpty(criteria) || check.Name.ToLower().Contains(criteria.ToLower());
+        }
+
+        #endregion
+
         protected override void InitializeCommands()
         {
-            ClosingCommand = new SmartCommand<object>(ExecuteClosingCommand, CanExecuteClosingCommand);  
+            ClosingCommand = new SmartCommand<object>(ExecuteClosingCommand, CanExecuteClosingCommand);
             NewDocumentCommand = new SmartCommand<object>(ExecuteNewDocumentCommand, CanExecuteNewDocumentCommand);
             SaveDocumentCommand = new SmartCommand<object>(ExecuteSaveDocumentCommand, CanExecuteSaveDocumentCommand);
             OpenDocumentCommand = new SmartCommand<object>(ExecuteOpenDocumentCommand, CanExecuteOpenDocumentCommand);
@@ -314,6 +419,9 @@ namespace AudioTool.ViewModel
             CloseCommand = new SmartCommand<object>(ExecuteCloseCommand, CanExecuteCloseCommand);
             ExportCommand = new SmartCommand<object>(ExecuteExportCommand, CanExecuteExportCommand);
             RemoveCommand = new SmartCommand<object>(ExecuteRemoveCommand, CanExecuteRemoveCommand);
+            ReImportSelectedSoundCommand = new SmartCommand<object>(ExecuteReImportSelectedSoundCommand);
+            ReImportFromNewPathCommand = new SmartCommand<object>(ExecuteReImportFromNewPathCommand);
+            ReimportArbitraryCommand = new SmartCommand<object>(ExecuteReimportArbitraryCommand);
         }
         #endregion
 

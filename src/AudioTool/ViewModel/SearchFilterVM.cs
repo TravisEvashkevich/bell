@@ -28,14 +28,16 @@ namespace AudioTool.ViewModel
             var instance = ServiceLocator.Current.GetInstance<MainWindowVM>();
             if (instance.Documents == null)
                 return;
+            if(instance.Documents.Count == 0) return;
 
-            ApplyCriteria(SearchText, new Stack<NodeWithName>(), instance.Documents[0]);
+            var start = instance.Documents[0];
+            ApplyCriteria(SearchText, new Stack<NodeWithName>(), start);
             //instance.Documents[0].IsExpanded = true;
         }
 
         private bool IsCriteriaMatched(string criteria, NodeWithName check)
         {
-            return String.IsNullOrEmpty(criteria) || check.Name.Contains(criteria);
+            return String.IsNullOrEmpty(criteria) || check.Name.ToLower().Contains(criteria.ToLower());
         }
 
         public void ApplyCriteria(string criteria, Stack<NodeWithName> ancestors, NodeWithName startPoint)

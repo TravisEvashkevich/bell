@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Timers;
 using System.Windows;
 using AudioTool.Core;
@@ -42,6 +43,43 @@ namespace AudioTool.Data
                 Glue.Instance.DocumentIsSaved = false;
             }
         }
+
+        #region Radius
+        private float _radius;
+
+        public float Radius { get { return _radius; } set
+        {
+            CenterPoint = new Point(_definedCenter.X - (value / 2), _definedCenter.Y - (value/2));
+            Set(ref _radius, value); } 
+        }
+        #endregion
+
+        #region center
+
+        //This is the center that the circle uses
+        private Point _centerPoint;
+        [JsonIgnore]
+        public Point CenterPoint
+        {
+            get { return _centerPoint; }
+            set { Set(ref _centerPoint, value); }
+        }
+
+        //This is the values we get from the textboxes and help to make sure the circle stays centered by 
+        //adjusting the CenterPoint var.
+        private Point _definedCenter;
+        [JsonIgnore]
+        public Point DefinedCenter
+        {
+            get { return _definedCenter; }
+            set
+            {
+                CenterPoint = new Point(value.X - (Radius / 2), value.Y - (Radius / 2));
+                Set(ref _definedCenter, value);
+            }
+        }
+
+        #endregion  
 
         #region Pitch
 
@@ -156,6 +194,43 @@ namespace AudioTool.Data
 
         #endregion
 
+        #region Playing
+
+        private bool _playing;
+        [JsonIgnore]
+        public bool Playing
+        {
+            get { return _playing; }
+            set
+            {
+                //for things like Parallel play, longer sounds can still be playing
+                //even though the short ones have set the bool to false so we do a check
+                if (CuePlaybackMode == CuePlaybackMode.Parallel)
+                    foreach (Sound child in Children)
+                    {
+                        {
+                            if (child.PlayingInstance.State == SoundState.Playing)
+                            {
+                                Set(ref _playing, true);
+                                foreach (Sound sound in Children)
+                                {
+                                    sound.ParentIsPlaying = true;
+                                }
+                                return;
+                            }
+                        }
+                    }
+                Set(ref _playing, value);
+                foreach (Sound sound in Children)
+                {
+                    sound.ParentIsPlaying = value;
+                }
+            }
+        }
+
+        #endregion
+
+        #region Play Options
         private void PlayParallel()
         {
             foreach (Sound sound in Children)
@@ -166,104 +241,145 @@ namespace AudioTool.Data
 
         private void PlayRandom()
         {
+            if (CheckIfAllSoundsMuted(Children.ToList()))
+            {
+                return;
+            }
             var count = Children.Count;
 
             var random = new Random((int)DateTime.Now.Ticks);
             var index = random.Next(count);
-
-            (Children[index] as Sound).Play();
+            if(!(Children[index] as Sound).IsMuted)
+                (Children[index] as Sound).Play();
+            else
+            {
+                PlayRandom();
+            }
         }
 
         private int _playingIndex = 0;
 
         private Timer _timer = new Timer();
 
-        #region Playing	
-
-        private bool _playing;
-        [JsonIgnore]
-        public bool Playing
-        {
-            get { return _playing; }
-            set
-            {
-                Set(ref _playing, value);
-            }
-        }
-
-        #endregion
-
-
         private void PlaySerial()
         {
+            if (_playingIndex >= Children.Count)
+            {
+                _playingIndex = 0;
+            }
+
             if (Playing && _playingIndex < Children.Count)
             {
                 var sound = Children[_playingIndex] as Sound;
-                var duration = sound.SoundEffect.Duration;
-                sound.Play();
-                _playingIndex++;
-                _timer.Stop();
-                _timer.Interval = duration.TotalMilliseconds;
-                _timer.Start();
+                if (!sound.IsMuted)
+                {
+                    var duration = sound.SoundEffect.Duration;
+                    sound.Play();
+                    _playingIndex++;
+                    _timer.Stop();
+                    _timer.Interval = duration.TotalMilliseconds;
+                    _timer.Start(); 
+                }
+                else
+                {
+                    //We'll do a check to make sure that not all the sounds are muted in serial
+                    //so we don't get an infinite loop
+                    bool allMuted = true;
+                    foreach (Sound child in Children)
+                    {
+                        if (!child.IsMuted)
+                        {
+                            allMuted = false;
+                        }
+                    }
+                    if(allMuted == false)
+                    {
+                        ++_playingIndex;
+                        PlaySerial();
+                    }
+                    else
+                    {
+                        MessageBox.Show("All sounds are Muted");
+                        Stop();
+                    }
+                }
+                
             }
-            else
-            {
-                _timer.Stop();
-                Playing = false;
-            }
+
         }
 
         private void PlayCycle()
         {
+
+            if (CheckIfAllSoundsMuted(Children.ToList()))
+            {
+                Stop();
+                return;
+            }
+            //Check for index count BEFORE playing the cycle so that way we don't have to do a full extra click before playing
+            //and also doesn't do the recursive call it prev did which made it loop constantly
+            if (_playingIndex >= Children.Count)
+                _playingIndex = 0;
+
             if (Playing && _playingIndex < Children.Count)
             {
                 var sound = Children[_playingIndex] as Sound;
-                var duration = sound.SoundEffect.Duration;
+                if (sound.IsMuted)
+                {
+                    ++_playingIndex;
+                    PlayCycle();
+                    return;
+                }
                 sound.Play();
                 _playingIndex++;
-                _timer.Stop();
-                _timer.Interval = duration.TotalMilliseconds;
-                _timer.Start();
-            }
-            else
-            {
-                _playingIndex = 0;
-                PlayCycle();
-            }
+            }           
         }
 
         [JsonIgnore]
-        private List<INode> _soundsListToUse = new List<INode>(); 
+        private List<INode> _soundsList1 = new List<INode>();
 
         private void PlayRandomCycle()
         {
-            if (Playing && _soundsListToUse.Count > 0)
+            if (CheckIfAllSoundsMuted(Children.ToList()))
             {
-                var count = _soundsListToUse.Count;
-
-                var random = new Random((int)DateTime.Now.Ticks);
-                var index = random.Next(count);
-
-                var sound = _soundsListToUse[index] as Sound;
-                var duration = sound.SoundEffect.Duration;
-                sound.Play();
-                _soundsListToUse.Remove(sound);
-                _timer.Stop();
-                _timer.Interval = duration.TotalMilliseconds;
-                _timer.Start();
+                Stop();
+                return;
             }
-            else
+            //check to see if the list is empty before we go to play.
+            if (_soundsList1.Count <= 0)
             {
-                _soundsListToUse = new List<INode>(Children);
-                PlayRandomCycle();
+                _soundsList1 = new List<INode>(Children);
+            }
+
+            //Check to see if all sounds are muted before even going into the playing
+            if (CheckIfAllSoundsMuted(_soundsList1) && _soundsList1.Count < Children.Count)
+            {
+                _soundsList1 = new List<INode>(Children);
+            }
+
+            if (Playing && _soundsList1.Count >0)
+            {
+                var random = new Random();
+                var index = random.Next(_soundsList1.Count);
+                var sound = _soundsList1[index] as Sound;
+                //check to see if the sound is muted, if it is, 
+                //remove it from the list and then call playrandomcycle again so it can find another sound that does play
+                //Return after it comes out of the method so that way it doesn't try to play a sound that is removed
+                if (sound.IsMuted)
+                {
+                    _soundsList1.Remove(sound);
+                    PlayRandomCycle();
+                    return;
+                }
+                sound.Play();
+                //Remove sound from list.
+                _soundsList1.Remove(sound);
             }
         }
 
         public void Play()
         {
             Playing = true;
-            _soundsListToUse = new List<INode>(Children);
-            _playingIndex = 0;
 
             switch (_playbackInUse)
             {
@@ -280,18 +396,95 @@ namespace AudioTool.Data
                     PlayRandom();
                     break;
                 case CuePlaybackMode.Serial:
+                    _playingIndex = 0;
                     PlaySerial();
-                    break;
+                    break; 
             }
+        }
+        #endregion
+
+        public bool CheckIfAllSoundsMuted(List<INode> toCheckList )
+        {
+            //We'll do a check to make sure that not all the sounds are muted in serial
+            //so we don't get an infinite loop
+            bool allMuted = true;
+            foreach (Sound child in toCheckList)
+            {
+                if (!child.IsMuted)
+                {
+                    allMuted = false;
+                    break;
+                }
+            }
+            if (allMuted == false)
+            {
+                return false;
+            }
+            //Stop();
+            return true;
         }
 
         public void Stop()
         {
-            Playing = false;
+            
             _timer.Stop();
             foreach (Sound sound in Children)
             {
                 sound.Stop();
+            }
+            Playing = false;
+        }
+
+        private bool IsAnySoundPlay()
+        {
+            foreach (Sound sound in Children)
+            {
+                if (sound.PlayingInstance != null && sound.PlayingInstance.State == SoundState.Playing)
+                    return true;
+            }
+
+            return false;
+        }
+
+        public void DecreaseSoundIndex(Sound sound)
+        {
+            var index = -1;
+            index =Children.IndexOf(sound);
+
+            if (index == -1)
+                return;
+            
+            if (index >0)
+            {
+                Children.RemoveAt(index);
+                Children.Insert(index-1,sound);
+                
+            }
+            else if (index == 0)
+            {
+                Children.RemoveAt(index);
+                Children.Insert(Children.Count,sound);
+            }
+        }
+
+        public void IncreaseSoundIndex(Sound sound)
+        {
+            var index = -1;
+            index = Children.IndexOf(sound);
+
+            if (index == -1)
+                return;
+
+            if (index == Children.Count)
+            {
+                Children.RemoveAt(index);
+                Children.Insert(index + 1, sound);
+
+            }
+            else if(index >= 0)
+            {
+                Children.RemoveAt(index);
+                Children.Insert(0, sound);
             }
         }
 
@@ -315,24 +508,16 @@ namespace AudioTool.Data
 
         #endregion
 
-        private bool IsAnySoundPlay()
-        {
-            foreach (Sound sound in Children)
-            {
-                if (sound.PlayingInstance != null && sound.PlayingInstance.State == SoundState.Playing)
-                    return true;
-            }
-
-            return false;
-        }
-
         #region PlaySerialCommand
         [JsonIgnore]
         public SmartCommand<object> PlaySerialCommand { get; private set; }
 
         public bool CanExecutePlaySerialCommand(object o)
         {
-            return !Playing && Children.Count > 1;
+            //Doesn't make sense to make this NOT playable via the stub if only 1 child
+            //What's it matter really besides making it harder and more aggrivating to use if you 
+            //have to go one layer deeper just to play the sound.
+            return !Playing /*&& Children.Count > 1*/;
         }
 
         public void ExecutePlaySerialCommand(object o)
@@ -386,7 +571,7 @@ namespace AudioTool.Data
 
         public bool CanExecutePlayRandomCycleCommand(object o)
         {
-            return !Playing && Children.Count > 1;
+            return !Playing /*&& Children.Count > 1*/;
         }
 
         public async void ExecutePlayRandomCycleCommand(object o)
@@ -485,22 +670,68 @@ namespace AudioTool.Data
 
         #endregion
 
+        #region ReimportAll Command
+        [JsonIgnore]
+        public SmartCommand<object> ReimportAllCommand { get; private set; }
+
+        public void ExecuteReimportAllCommand(object obj)
+        {
+            foreach (Sound child in Children)
+            {
+                child.ExecuteReImport(child);
+            }
+        }
+        #endregion
+
+        #region MuteAllCommand
+
+        public SmartCommand<object> MuteAllCommand { get; private set; }
+
+        public bool CanExecuteMuteAll(object o)
+        {
+            return !Playing;
+        }
+
+        public void ExecuteMuteAll(object obj)
+        {
+            foreach (Sound child in Children)
+            {
+                child.IsMuted = true;
+            }
+        }
+        #endregion
+
+        #region Un-MuteAllCommand
+
+        public SmartCommand<object> UnMuteAllCommand { get; private set; }
+
+        public void ExecuteUnMuteAll(object o)
+        {
+            foreach (Sound child in Children)
+            {
+                child.IsMuted = false;
+            }
+        }
+        #endregion
+
         public Cue()
         {
             Name = "New Cue";
             Children = new ObservableCollection<INode>();
             _timer = new Timer();
             _timer.Elapsed += _timer_Elapsed;
+            _definedCenter.X = 200;
+            _definedCenter.Y = 100;
+
+            _radius = 4;
+            _centerPoint.X = _definedCenter.X - (_radius / 2);
+            _centerPoint.Y = _definedCenter.Y - (_radius / 2);
         }
 
         void _timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             if (_playbackInUse == CuePlaybackMode.Serial)
                 PlaySerial();
-            else if (_playbackInUse == CuePlaybackMode.Cycle)
-                PlayCycle();
-            else if (_playbackInUse == CuePlaybackMode.RandomCycle)
-                PlayRandomCycle();
         }
 
         [JsonConstructor]
@@ -523,7 +754,12 @@ namespace AudioTool.Data
 
             StopCommand = new SmartCommand<object>(ExecuteStopCommand, CanExecuteStopCommand);
             AddSoundCommand = new SmartCommand<object>(ExecuteAddSoundCommand, CanExecuteAddSoundCommand);  
+            ReimportAllCommand = new SmartCommand<object>(ExecuteReimportAllCommand);
+
+            MuteAllCommand = new SmartCommand<object>(ExecuteMuteAll, CanExecuteMuteAll);
+            UnMuteAllCommand = new SmartCommand<object>(ExecuteUnMuteAll);
             base.InitializeCommands();
         }
+
     }
 }

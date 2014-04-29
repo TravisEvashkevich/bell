@@ -88,6 +88,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\BooleanToVisiblityConverter.cs" />
+    <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="Core\AudioManager.cs" />
     <Compile Include="Core\Helper.cs" />
     <Compile Include="Core\SoundStateChangedEventArgs.cs" />
@@ -214,6 +215,7 @@
     <Content Include="Content\play.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Content\GreenScreen.png" />
     <Content Include="Content\stop.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

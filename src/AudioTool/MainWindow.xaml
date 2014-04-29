@@ -28,6 +28,11 @@
                 <Separator></Separator>
                 <MenuItem Header="Export" HorizontalAlignment="Left" Command="{Binding ExportCommand}" InputGestureText="Ctrl + E" />
             </MenuItem>
+            <MenuItem Header="ReImport">
+                <MenuItem Header="Re-Import Selected Sound" Command="{Binding ReImportSelectedSoundCommand}" InputGestureText="Ctrl+R"/>
+                <MenuItem Header="Re-Import Selected Sound from new location" Command="{Binding ReImportFromNewPathCommand}" InputGestureText="Ctrl+Shift+R"/>
+                <MenuItem Header="Re-Import (Select from System)" Command="{Binding ReimportArbitraryCommand}"/>
+            </MenuItem>
             <MenuItem Header="Preferences" Command="{Binding OpenPreferencesWindowCommand}">
             </MenuItem>
         </Menu>
