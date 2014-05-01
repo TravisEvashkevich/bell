@@ -94,7 +94,7 @@ namespace AudioTool.Data
                 Set(ref _pitch, value);
                 foreach (Sound sound in Children)
                 {
-                    sound.RefreshProperties();
+                    sound.RefreshProperties(this);
                 }
                 Glue.Instance.DocumentIsSaved = false;
             }
@@ -115,7 +115,7 @@ namespace AudioTool.Data
                 Set(ref _volume, value);
                 foreach (Sound sound in Children)
                 {
-                    sound.RefreshProperties();
+                    sound.RefreshProperties(this);
                 }
                 Glue.Instance.DocumentIsSaved = false;
             }
@@ -136,7 +136,7 @@ namespace AudioTool.Data
                 Set(ref _pan, value);
                 foreach (Sound sound in Children)
                 {
-                    sound.RefreshProperties();
+                    sound.RefreshProperties(this);
                 }
                 Glue.Instance.DocumentIsSaved = false;
             }
@@ -465,6 +465,7 @@ namespace AudioTool.Data
                 Children.RemoveAt(index);
                 Children.Insert(Children.Count,sound);
             }
+            Glue.Instance.DocumentIsSaved = false;
         }
 
         public void IncreaseSoundIndex(Sound sound)
@@ -486,6 +487,7 @@ namespace AudioTool.Data
                 Children.RemoveAt(index);
                 Children.Insert(0, sound);
             }
+            Glue.Instance.DocumentIsSaved = false;
         }
 
         #region PlayParallelCommand
@@ -678,7 +680,7 @@ namespace AudioTool.Data
         {
             foreach (Sound child in Children)
             {
-                child.ExecuteReImport(child);
+                child.ExecuteReImport(null);
             }
         }
         #endregion

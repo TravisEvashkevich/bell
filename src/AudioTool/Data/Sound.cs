@@ -16,6 +16,8 @@ namespace AudioTool.Data
 {
     public sealed class Sound : NodeWithName
     {
+        private readonly object Sync = new object(); 
+
         #region Mute
         private bool _isMuted;
         public bool IsMuted { get { return _isMuted; } set { Set(ref _isMuted, value); } }
@@ -213,12 +215,15 @@ namespace AudioTool.Data
 
         void AudioManager_SoundStateChanged(object sender, SoundStateChangedEventArgs e)
         {
-            if(!PlayingInstance.IsDisposed)
+            lock (Sync)
             {
-                //Seems that the PlayingInstance on one thread can be out of sync (disposed)
-                //even though on this thread it is not? Only thing I can come up with.
-                Application.Current.Dispatcher.BeginInvoke(
-                    new Action(() => SoundState = PlayingInstance.State));
+                if (!PlayingInstance.IsDisposed)
+                {
+                    //Seems that the PlayingInstance on one thread can be out of sync (disposed)
+                    //even though on this thread it is not? Only thing I can come up with.
+                    Application.Current.Dispatcher.BeginInvoke(
+                        new Action(() => SoundState = PlayingInstance.State));
+                }
             }
         }
 
@@ -264,11 +269,11 @@ namespace AudioTool.Data
             }
         } 
 
-        public void RefreshProperties()
+        public void RefreshProperties(Cue cue)
         {
-            Pitch = Pitch;
-            Pan = Pan;
-            Volume = Volume;
+            Pitch = cue.Pitch;
+            Pan = cue.Pan;
+            Volume = cue.Volume;
         }
 
         private void InitializeInstance(SoundEffectInstance instance)
@@ -316,9 +321,15 @@ namespace AudioTool.Data
                     {
                         PlayingInstance.Stop();
                         AudioManager.RemoveSoundInstance(PlayingInstance);
-                        PlayingInstance.Dispose();
-                        PlayingInstance = SoundEffect.CreateInstance();
-                        InitializeInstance(PlayingInstance);
+                        lock (Sync)
+                        {
+                            //make a copy to the playing instance before you create a new one then dispose it after the new one is made
+                            //should make it so the "callback" doesn't ref to a object that is now disposed (seems to cure the crashes so far)
+                            var instance = PlayingInstance;
+                            PlayingInstance = SoundEffect.CreateInstance();
+                            instance.Dispose();
+                        }
+                        InitializeInstance(PlayingInstance, parent as Cue);
                         AudioManager.AddSoundInstance(PlayingInstance);
                         PlayingInstance.IsLooped = false;
                         PlayingInstance.Play();
@@ -327,9 +338,13 @@ namespace AudioTool.Data
                     {
                         PlayingInstance.Stop();
                         AudioManager.RemoveSoundInstance(PlayingInstance);
-                        PlayingInstance.Dispose();
-                        PlayingInstance = SoundEffect.CreateInstance();
-                        InitializeInstance(PlayingInstance);
+                        lock (Sync)
+                        {
+                            var instance = PlayingInstance;
+                            PlayingInstance = SoundEffect.CreateInstance();
+                            instance.Dispose();
+                        }
+                        InitializeInstance(PlayingInstance, parent as Cue);
                         AudioManager.AddSoundInstance(PlayingInstance);
                         PlayingInstance.IsLooped = Looped;
                         PlayingInstance.Play();
@@ -510,11 +525,13 @@ namespace AudioTool.Data
             if (!File.Exists(FilePath))
             {
                 //Search says it doesn't exist, inform the user to FIND the file
-                if (MessageBox.Show("The file doesn't exist at the old path, would you like to find the file?",
+                if (MessageBox.Show(string.Format("The file {0} doesn't exist at the old path, would you like to find the file?",Path.GetFileNameWithoutExtension(FilePath)),
                     "Missing File.", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
                     //The thing is, the filename could have technically changed or have a different syntax or something
                     var dialog = new OpenFileDialog();
+                    dialog.Title = string.Format("Find {0}", Path.GetFileNameWithoutExtension(FilePath));
+                    dialog.Filter = ".Wav (*.Wav)|*.Wav";
 
                     bool? result = dialog.ShowDialog();
                     if (result == true)
@@ -527,17 +544,19 @@ namespace AudioTool.Data
                         if (fileName != Name)
                         {
                             if (MessageBox.Show(
-                                "The selected file has a different name than what you are trying to overwrite. Would you like to proceed anyway?",
+                                String.Format("The selected file \"{0}\" has a different name than what you are trying to overwrite ({1}). Would you like to proceed anyway?",fileName,Name),
                                 "FileName doesn't match", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                             {
                                 //pass the filename from the dialog to the Reimport new version so it will Create and overwrite
                                 //the sound thus updating in the program.
                                 ReimportSoundFile(dialog.FileName);
+                                MessageBox.Show(String.Format("{0} was reimported successfully!", Path.GetFileNameWithoutExtension(FilePath)), "Success!");
                             }
                         }
                         else
                         {
                             ReimportSoundFile(dialog.FileName);
+                            MessageBox.Show(String.Format("{0} was reimported successfully!", Path.GetFileNameWithoutExtension(FilePath)), "Success!");
                         }
                     }
                 }
@@ -549,7 +568,12 @@ namespace AudioTool.Data
 
                 if (date > FileLastModified)
                 {
-                    ReimportSoundFile();
+                    if(obj != null)
+                        ReimportSoundFile(obj.ToString());
+                    else
+                    {
+                        ReimportSoundFile();
+                    }
                     MessageBox.Show(String.Format("{0} was reimported successfully!",Name),"Success!");
                 }
                 else if (date <= FileLastModified)
@@ -559,7 +583,12 @@ namespace AudioTool.Data
                         String.Format("The version of: \n {0} \n Is older than the current version. Continue Reimport?",Path.GetFileNameWithoutExtension(FilePath)),
                         "Warning", MessageBoxButton.YesNoCancel) == MessageBoxResult.Yes)
                     {
-                        ReimportSoundFile();
+                        if (obj != null)
+                            ReimportSoundFile(obj.ToString());
+                        else
+                        {
+                            ReimportSoundFile();
+                        }
                         MessageBox.Show(String.Format("{0} was reimported successfully!", Path.GetFileNameWithoutExtension(FilePath)), "Success!");
                     }
                 }

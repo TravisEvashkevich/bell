@@ -49,7 +49,7 @@ namespace AudioTool
             InputBindings.Add(new KeyBinding(instance.RemoveCommand, new KeyGesture(Key.Delete)));
             InputBindings.Add(new KeyBinding(instance.ReImportSelectedSoundCommand, new KeyGesture(Key.R, ModifierKeys.Control)));
             InputBindings.Add(new KeyBinding(instance.ReImportFromNewPathCommand, new KeyGesture(Key.R, ModifierKeys.Control | ModifierKeys.Shift)));
-            //InputBindings.Add(new KeyBinding(instance.PasteCommand, new KeyGesture(Key.V, ModifierKeys.Control)));
+            InputBindings.Add(new KeyBinding(instance.ReimportCueCommand, new KeyGesture(Key.C, ModifierKeys.Control | ModifierKeys.Shift)));
         }
 
         private void MainWindow_OnClosing(object sender, CancelEventArgs e)

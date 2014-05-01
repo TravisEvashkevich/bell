@@ -41,7 +41,7 @@
                 <StackPanel Margin="10,10,0,0">
                     <TextBlock HorizontalAlignment="Left" Margin="0,0,0,5" TextWrapping="Wrap" Text="Playback Mode:" VerticalAlignment="Top"/>
                     <StackPanel Orientation="Horizontal">
-                        <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Width="228" ItemsSource="{Binding CueModes}" SelectedItem="{Binding Cue.CuePlaybackMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Width="228" ItemsSource="{Binding CueModes}" IsEnabled="{Binding Cue.Playing, Converter={StaticResource InverseBooleanConverter}}" SelectedItem="{Binding Cue.CuePlaybackMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         <Button Content="Play" Command="{Binding Cue.PlayCommand}" HorizontalAlignment="Left" Margin="5,0,5,0" VerticalAlignment="Top" Width="75"/>
                         <Button Content="Stop" Command="{Binding Cue.StopCommand}" HorizontalAlignment="Left" Margin="5,0,5,0" VerticalAlignment="Top" Width="75"/> 
                     </StackPanel>
