@@ -640,7 +640,7 @@ namespace AudioTool.Data
         #endregion
 
         #region MoveUpInCueCommand
-
+        [JsonIgnore]
         public SmartCommand<object> MoveUpInCueCommand { get; private set; }
 
         public void ExecuteMoveUpInCue(object o)
@@ -650,7 +650,7 @@ namespace AudioTool.Data
         #endregion
 
         #region MoveDownInCueCommand
-
+        [JsonIgnore]
         public SmartCommand<object> MoveDownInCueCommand { get; private set; }
 
         public void ExecuteMoveDownInCue(object o)
