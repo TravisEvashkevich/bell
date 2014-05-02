@@ -217,10 +217,12 @@ namespace AudioTool.Data
         {
             lock (Sync)
             {
-                if (!PlayingInstance.IsDisposed)
+                //For some reason sometimes the playinginstance just says it's Null which is BS
+                //and when it's null it will crash it, so we check it before we try to change it 
+                //It's weird as the sound will still get updated to finished when it's done so the random null
+                //is utter bullshit.
+                if (PlayingInstance != null && !PlayingInstance.IsDisposed)
                 {
-                    //Seems that the PlayingInstance on one thread can be out of sync (disposed)
-                    //even though on this thread it is not? Only thing I can come up with.
                     Application.Current.Dispatcher.BeginInvoke(
                         new Action(() => SoundState = PlayingInstance.State));
                 }
