@@ -35,6 +35,14 @@ namespace AudioTool.Data
             }
         }
 
+        private bool _approved;
+        [JsonIgnore]
+        public bool Approved
+        {
+            get { return _approved; }
+            set { Set(ref _approved, value); }
+        }
+
         [JsonProperty("name")]
         public virtual string Name
         {

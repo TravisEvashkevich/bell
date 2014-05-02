@@ -14,6 +14,17 @@ namespace AudioTool.ViewModel
 
         private string _searchText;
 
+        private bool _excludeApproved;
+        public bool ExcludeApproved
+        {
+            get { return _excludeApproved; }
+            set
+            {
+                Set(ref _excludeApproved, value);
+                ExecuteSearchCommand(null);
+            }
+        }
+
         public SearchFilterVM()
         {
         }
@@ -37,11 +48,18 @@ namespace AudioTool.ViewModel
 
         private bool IsCriteriaMatched(string criteria, NodeWithName check)
         {
+            if (!ExcludeApproved)
+                return String.IsNullOrEmpty(criteria) || check.Name.ToLower().Contains(criteria.ToLower());
+
+            if (check.Approved)
+                return false;
+
             return String.IsNullOrEmpty(criteria) || check.Name.ToLower().Contains(criteria.ToLower());
         }
 
         public void ApplyCriteria(string criteria, Stack<NodeWithName> ancestors, NodeWithName startPoint)
         {
+
             if (IsCriteriaMatched(criteria, startPoint))
             {
                 startPoint.IsVisible = true;
@@ -53,13 +71,11 @@ namespace AudioTool.ViewModel
             }
             else
                 startPoint.IsVisible = false;
-
+            
             ancestors.Push(startPoint);
-            if (startPoint.Children != null && startPoint.Children.Count > 0)
-            {
-                foreach (var child in startPoint.Children)
+            foreach (var child in startPoint.Children)
+                if (child != null && child.GetType() != typeof(Sound))
                     ApplyCriteria(criteria, ancestors, child as NodeWithName);
-            }
 
             ancestors.Pop();
         }

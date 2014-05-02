@@ -102,19 +102,21 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition></ColumnDefinition>
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="{Binding Path=Name}" />
-                <TextBlock Grid.Column="0" Text="{Binding Path=Children.Count, StringFormat={}Sounds: {0}}" Grid.Row="1" />
-                <Button Grid.Row="0" Grid.RowSpan="2" Command="{Binding PlayCommand}" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding Playing, Converter={StaticResource CollapseIfTrueConverter}}" Background="{x:Null}" BorderBrush="{x:Null}">
+                <CheckBox Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" Content="Approved" IsChecked="{Binding Approved, UpdateSourceTrigger=PropertyChanged}" Margin="10,0,10,0" Focusable="False"/>
+                <TextBlock Grid.Column="0" Grid.Row="2" Text="{Binding Path=Children.Count, StringFormat={}Sounds: {0}}" />
+                <Button Grid.Row="0" Grid.RowSpan="3" Focusable="False" Command="{Binding PlayCommand}" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding Playing, Converter={StaticResource CollapseIfTrueConverter}}" Background="{x:Null}" BorderBrush="{x:Null}">
                     <Button.Content>
                         <Image Source="../Content/play.png"></Image>
                     </Button.Content>
                 </Button>
-                <Button Grid.Row="0" Grid.RowSpan="2" Command="{Binding StopCommand}" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding Playing, Converter={StaticResource ShowIfTrueConverter}}" Background="{x:Null}" BorderBrush="{x:Null}">
+                <Button Grid.Row="0" Grid.RowSpan="3" Focusable="False" Command="{Binding StopCommand}" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Visibility="{Binding Playing, Converter={StaticResource ShowIfTrueConverter}}" Background="{x:Null}" BorderBrush="{x:Null}">
                     <Button.Content>
                         <Image Source="../Content/stop.png"></Image>
                     </Button.Content>

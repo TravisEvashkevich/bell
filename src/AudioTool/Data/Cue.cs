@@ -686,7 +686,7 @@ namespace AudioTool.Data
         #endregion
 
         #region MuteAllCommand
-
+        [JsonIgnore]
         public SmartCommand<object> MuteAllCommand { get; private set; }
 
         public bool CanExecuteMuteAll(object o)
@@ -704,7 +704,7 @@ namespace AudioTool.Data
         #endregion
 
         #region Un-MuteAllCommand
-
+        [JsonIgnore]
         public SmartCommand<object> UnMuteAllCommand { get; private set; }
 
         public void ExecuteUnMuteAll(object o)
