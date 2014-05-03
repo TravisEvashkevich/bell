@@ -17,7 +17,7 @@ namespace AudioTool.Data.Export
         [JsonProperty("folders", Required = Required.AllowNull)]
         public List<FolderExport> Folders { get; set; }
 
-        public FolderExport(Folder folder)
+        public FolderExport(INode folder)
         {
             Name = folder.Name;
 

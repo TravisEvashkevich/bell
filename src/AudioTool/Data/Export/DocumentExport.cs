@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace AudioTool.Data.Export
@@ -13,11 +14,11 @@ namespace AudioTool.Data.Export
         [JsonProperty("folders")]
         public List<FolderExport> Folders { get; set; }
 
-        public DocumentExport(Document document)
+        public DocumentExport(INode document)
         {
             ProjectName = document.Name;
             Folders = new List<FolderExport>();
-            foreach (Folder folder in document.Children)
+            foreach (var folder in document.Children.Cast<Folder>())
             {
                 Folders.Add(new FolderExport(folder));
             }

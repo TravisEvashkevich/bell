@@ -9,14 +9,12 @@ namespace AudioTool.Data
     public interface INode : IName
     {
         ObservableCollection<INode> Children { get; set; }
-
         INode Parent { get; set; }
+        void Initialize();
     }
 
     public abstract class NodeWithName : MainViewModel, INode
     {
-        protected Glue Glue = ServiceLocator.Current.GetInstance<Glue>();
-
         protected string _name;
 
         
@@ -72,6 +70,10 @@ namespace AudioTool.Data
         }
 
         public INode Parent { get; set; }
+        public void Initialize()
+        {
+            InitializeCommands();
+        }
 
         public virtual void Remove()
         {

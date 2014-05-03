@@ -93,11 +93,13 @@
     <Compile Include="Core\Helper.cs" />
     <Compile Include="Core\SoundStateChangedEventArgs.cs" />
     <Compile Include="Core\WindowCloseBehaviour.cs" />
+    <Compile Include="Data\BinaryFileFormat.cs" />
     <Compile Include="Data\Cue.cs" />
     <Compile Include="Data\Export\DocumentExport.cs" />
     <Compile Include="Data\Export\FolderExport.cs" />
     <Compile Include="Data\Export\CueExport.cs" />
     <Compile Include="Data\Export\SoundExport.cs" />
+    <Compile Include="Data\FileFormat.cs" />
     <Compile Include="Data\Sound.cs" />
     <Compile Include="ViewModel\DocumentViewVM.cs" />
     <Compile Include="ViewModel\FolderViewVM.cs" />

@@ -35,12 +35,7 @@ namespace AudioTool.ViewModel
     /// </summary>
     public class MainWindowVM : MainViewModel
     {
-        public Glue Glue
-        {
-            get { return ServiceLocator.Current.GetInstance<Glue>(); }
-        }
-
-        private ViewModelLocator _viewModelLocator;
+        private readonly ViewModelLocator _viewModelLocator;
 
         private MainViewModel _currentView;
 

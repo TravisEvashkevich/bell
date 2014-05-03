@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using AudioTool.Core;
 using Microsoft.Win32;
@@ -8,11 +9,13 @@ namespace AudioTool.Data
 {
     public sealed class Document : NodeWithName
     {
+        private static readonly FileFormat Format = new BinaryFileFormat();
+
         public void Save(bool forceNewName)
         {
             if (forceNewName || Filename == "Not Saved")
             {
-                SaveFileDialog Dialog = new SaveFileDialog();
+                var Dialog = new SaveFileDialog();
                 Dialog.Filter = "Audio Tool File (*.auf)|*.auf";
                 var result = Dialog.ShowDialog();
                 if (result.Value)
@@ -25,9 +28,8 @@ namespace AudioTool.Data
                 }
             }
 
-            var json = Core.JsonSerializer.Serialize(this);
-            File.WriteAllText(Filename, json);
-
+            Format.Save(Filename, this);
+                
             Glue.Instance.DocumentIsSaved = true;
         }
 
@@ -35,31 +37,20 @@ namespace AudioTool.Data
         {
             string fileName;
 
-            var dialog = new OpenFileDialog();
-            dialog.Filter = "Audio Tool File (*.auf)|*.auf";
-            
+            var dialog = new OpenFileDialog {Filter = "Audio Tool File (*.auf)|*.auf"};
+
             var result = dialog.ShowDialog();
             if (result.Value)
-                fileName = dialog.FileName;
-            else
-                return null;
-
-            var json = File.ReadAllText(fileName);
-            var deserialized = Core.JsonSerializer.Deserialize<Document>(json);
-
-            deserialized.Filename = fileName;
-           // SetParentRecursivly(deserialized);
-
-            return deserialized;
-        }
-
-        public static void SetParentRecursivly(INode node)
-        {
-            foreach (var child in node.Children)
             {
-                child.Parent = node;
-                SetParentRecursivly(child);
+                fileName = dialog.FileName;
             }
+            else
+            {
+                return null;
+            }
+
+            var document = Format.Load(fileName);
+            return document;
         }
 
         [JsonProperty("folders")]
@@ -96,7 +87,7 @@ namespace AudioTool.Data
         }
 
          [JsonConstructor]
-        public Document(ObservableCollection<Folder> folders)
+        public Document(IEnumerable<Folder> folders)
             : this()
         {
             foreach (var folder in folders)
@@ -123,6 +114,11 @@ namespace AudioTool.Data
         {
             NewFolderCommand = new SmartCommand<object>(ExecuteNewFolderCommand, CanExecuteNewFolderCommand);
             base.InitializeCommands();
+        }
+
+        public void Initialize()
+        {
+            InitializeCommands();
         }
     }
 }

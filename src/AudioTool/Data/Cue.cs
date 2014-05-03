@@ -282,8 +282,7 @@ namespace AudioTool.Data
                 }
                 else
                 {
-                    //We'll do a check to make sure that not all the sounds are muted in serial
-                    //so we don't get an infinite loop
+                    // We'll do a check to make sure that not all the sounds are muted in serial so we don't get an infinite loop
                     bool allMuted = true;
                     foreach (Sound child in Children)
                     {
