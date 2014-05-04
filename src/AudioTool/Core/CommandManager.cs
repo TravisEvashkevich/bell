@@ -15,6 +15,7 @@ namespace AudioTool.Core
         {
             foreach (var c in Commands)
             {
+                if (c == null) continue;
                 c.RaiseCanExecuteChanged();
             }
 
