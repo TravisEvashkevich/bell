@@ -38,7 +38,6 @@ namespace AudioTool.Data.Export
             Volume = cue.Volume;
             Pitch = cue.Pitch;
             Looped = cue.Looped;
-            Instances = cue.Instances;
             Name = cue.Name;
             PlaybackMode = cue.CuePlaybackMode;
             Sounds = new List<SoundExport>(cue.Children.Count);

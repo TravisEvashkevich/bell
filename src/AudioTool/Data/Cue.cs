@@ -165,23 +165,6 @@ namespace AudioTool.Data
 
         #endregion
 
-        #region Instances	
-
-        private int _instances;
-
-        [JsonProperty("instances")]
-        public int Instances
-        {
-            get { return _instances; }
-            set
-            {
-                Set(ref _instances, value);
-                Glue.Instance.DocumentIsSaved = false;
-            }
-        }
-
-        #endregion
-
         #region CuePlaybackMode	
 
         private CuePlaybackMode _cuePlaybackMode;

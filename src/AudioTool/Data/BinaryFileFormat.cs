@@ -138,7 +138,6 @@ namespace AudioTool.Data
             var cue = (Cue)child;
             writer.Write((sbyte)Type.Cues);
             writer.Write(cue.Approved);
-            writer.Write(cue.Instances);
             writer.Write(cue.Looped);
             writer.Write(cue.Name);
             writer.Write(cue.Pan);
@@ -162,7 +161,6 @@ namespace AudioTool.Data
         private static void ReadCue(BinaryReader reader, INode parent, ICollection<INode> container)
         {
             var approved = reader.ReadBoolean();
-            var instances = reader.ReadInt32();
             var looped = reader.ReadBoolean();
             var name = reader.ReadString();
             var pan = reader.ReadSingle();
@@ -178,7 +176,6 @@ namespace AudioTool.Data
             var cue = new Cue
             {
                 Approved = approved,
-                Instances = instances,
                 Looped = looped,
                 Name = name,
                 Pan = pan,
