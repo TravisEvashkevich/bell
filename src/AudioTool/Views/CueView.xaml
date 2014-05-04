@@ -32,9 +32,7 @@
                     <TextBox Text="{Binding Cue.Radius, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,0,0,0" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap"  VerticalAlignment="Top" Width="103"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="10,10,0,0">
-                    <Label Content="Instances: " HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                    <TextBox HorizontalAlignment="Left" Height="25" Margin="10,0,0,0" TextWrapping="Wrap" Text="{Binding Cue.Instances}" VerticalAlignment="Top" Width="50"/>
-                    <Label Content="Circle Center X/Y" Margin="20,0,0,0"/>
+                    <Label Content="Circle Center X/Y" Margin="0,0,0,0"/>
                     <TextBox x:Name="CenterXTextBox"  TextChanged="CenterTextBox_OnTextChanged" Width="50" Margin="10,0,0,0"/>
                     <TextBox x:Name="CenterYTextBox"  TextChanged="CenterTextBox_OnTextChanged" Width="50" Margin="10,0,0,0"/>
                 </StackPanel>

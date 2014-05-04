@@ -38,7 +38,9 @@ namespace AudioTool.Data
         public bool Approved
         {
             get { return _approved; }
-            set { Set(ref _approved, value); }
+            set { Set(ref _approved, value);
+                Glue.Instance.DocumentIsSaved = false;
+            }
         }
 
         [JsonProperty("name")]

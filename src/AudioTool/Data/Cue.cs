@@ -50,7 +50,10 @@ namespace AudioTool.Data
         public float Radius { get { return _radius; } set
         {
             CenterPoint = new Point(_definedCenter.X - (value / 2), _definedCenter.Y - (value/2));
-            Set(ref _radius, value); } 
+            Set(ref _radius, value);
+            Glue.Instance.DocumentIsSaved = false;
+        }
+            
         }
         #endregion
 
@@ -76,6 +79,7 @@ namespace AudioTool.Data
             {
                 CenterPoint = new Point(value.X - (Radius / 2), value.Y - (Radius / 2));
                 Set(ref _definedCenter, value);
+                Glue.Instance.DocumentIsSaved = false;
             }
         }
 
@@ -155,23 +159,6 @@ namespace AudioTool.Data
             set
             {
                 Set(ref _looped, value);
-                Glue.Instance.DocumentIsSaved = false;
-            }
-        }
-
-        #endregion
-
-        #region Instances	
-
-        private int _instances;
-
-        [JsonProperty("instances")]
-        public int Instances
-        {
-            get { return _instances; }
-            set
-            {
-                Set(ref _instances, value);
                 Glue.Instance.DocumentIsSaved = false;
             }
         }
