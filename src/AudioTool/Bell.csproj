@@ -91,6 +91,7 @@
     <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="Core\AudioManager.cs" />
     <Compile Include="Core\Helper.cs" />
+    <Compile Include="Core\ISmartCommand.cs" />
     <Compile Include="Core\SoundStateChangedEventArgs.cs" />
     <Compile Include="Core\WindowCloseBehaviour.cs" />
     <Compile Include="Data\BinaryFileFormat.cs" />

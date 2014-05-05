@@ -36,7 +36,6 @@ namespace AudioTool.Data
         public static Document Open()
         {
             string fileName;
-
             var dialog = new OpenFileDialog {Filter = "Audio Tool File (*.auf)|*.auf"};
 
             var result = dialog.ShowDialog();
@@ -50,6 +49,7 @@ namespace AudioTool.Data
             }
 
             var document = Format.Load(fileName);
+            document.Filename = fileName;
             return document;
         }
 
