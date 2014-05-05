@@ -171,31 +171,33 @@ namespace AudioTool.Data
             var centerPointY = reader.ReadDouble();
             var definedCenterX = reader.ReadDouble();
             var definedCenterY = reader.ReadDouble();
-            var cuePlaybackMode = (CuePlaybackMode)reader.ReadInt32();
+            var cuePlaybackMode = (CuePlaybackMode) reader.ReadInt32();
 
+            // Add parent first
             var cue = new Cue
             {
-                Approved = approved,
-                Looped = looped,
-                Name = name,
-                Pan = pan,
-                Pitch = pitch,
-                Radius = radius,
-                Volume = volume,
-                CenterPoint = new Point(centerPointX, centerPointY),
-                DefinedCenter = new Point(definedCenterX, definedCenterY),
-                CuePlaybackMode = cuePlaybackMode,
                 Parent = parent
             };
             container.Add(cue);
-            
+
+            cue.Approved = approved;
+            cue.Looped = looped;
+            cue.Name = name;
+            cue.Pan = pan;
+            cue.Pitch = pitch;
+            cue.Radius = radius;
+            cue.Volume = volume;
+            cue.CenterPoint = new Point(centerPointX, centerPointY);
+            cue.DefinedCenter = new Point(definedCenterX, definedCenterY);
+            cue.CuePlaybackMode = cuePlaybackMode;
+
             var count = reader.ReadInt32();
             for (var i = 0; i < count; i++)
             {
                 ReadSound(reader, cue);
             }
         }
-        
+
         private static void WriteSound(BinaryWriter writer, Sound sound)
         {
             writer.Write(sound.Name);
@@ -231,22 +233,23 @@ namespace AudioTool.Data
             var volume = reader.ReadSingle();
             var fileLastModified = reader.ReadInt64();
 
+            // Add parent first
             var sound = new Sound(data)
             {
-                Approved = approved,
-                Name = name,
-                FilePath = filePath,
-                IsMuted = isMuted,
-                Looped = looped,
-                Instances = instances,
-                Pan = Math.Abs(pan - float.MinValue) < 0f ? (float?) null : pan,
-                Pitch = Math.Abs(pitch - float.MinValue) < 0f ? (float?) null : pitch,
-                Volume = Math.Abs(volume - float.MinValue) < 0f ? (float?) null : volume,
-                FileLastModified = DateTime.FromBinary(fileLastModified),
                 Parent = cue
             };
-
             cue.Children.Add(sound);
+
+            sound.Approved = approved;
+            sound.Name = name;
+            sound.FilePath = filePath;
+            sound.IsMuted = isMuted;
+            sound.Looped = looped;
+            sound.Instances = instances == int.MinValue ? (int?) null : instances;
+            sound.Pan = pan == float.MinValue ? (float?) null : pan;
+            sound.Pitch = pitch == float.MinValue ? (float?)null : pitch;
+            sound.Volume = volume == float.MinValue ? (float?)null : volume;
+            sound.FileLastModified = DateTime.FromBinary(fileLastModified);
         }
     }
 }
