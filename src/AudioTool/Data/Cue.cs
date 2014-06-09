@@ -462,16 +462,16 @@ namespace AudioTool.Data
             if (index == -1)
                 return;
 
-            if (index == Children.Count)
+            if (index == Children.Count-1)
             {
                 Children.RemoveAt(index);
-                Children.Insert(index + 1, sound);
+                Children.Insert(0, sound);
 
             }
             else if(index >= 0)
             {
                 Children.RemoveAt(index);
-                Children.Insert(0, sound);
+                Children.Insert(index + 1, sound);
             }
             Glue.Instance.DocumentIsSaved = false;
         }
